@@ -1,16 +1,17 @@
 export const getLocation = async () => {
-  if (!navigator.geolocation) {
-    return "Geolocation is not supported by your browser";
-  } else {
+  return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        return `${position.coords.latitude},${position.coords.longitude}`;
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        resolve({ latitude, longitude });
       },
-      () => {
-        return "Unable to retrieve your location";
+      (error) => {
+        reject(error);
       }
     );
-  }
+  });
 };
 
 const detectCity = async (location: any) => {

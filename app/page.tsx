@@ -14,13 +14,10 @@ export default function Home() {
   );
 
   React.useEffect(() => {
-    getLocation()
-      .then((location: any) => {
-        setPosition(location);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    getLocation().then((location) => {
+      console.log("hello" + location);
+      setPosition(location as string);
+    });
   }, []);
 
   return (
