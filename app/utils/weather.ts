@@ -1,9 +1,12 @@
+import { config } from "dotenv";
+
+config();
+
 export async function getWeather(position: string) {
   const response = await fetch(
-    `http://api.weatherapi.com/v1/current.json?key=35821ad4033648b6aba05033230906&q=${position?.replace(
-      " ",
-      "%20"
-    )}&aqi=no)}`
+    `http://api.weatherapi.com/v1/current.json?key=${
+      process.env.WEATHER_API
+    }&q=${position?.replace(" ", "%20")}&aqi=no)}`
   );
   const data = await response.json();
 
