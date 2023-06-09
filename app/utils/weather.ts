@@ -4,7 +4,7 @@ config();
 
 export async function getWeather(position: string) {
   const response = await fetch(
-    `http://api.weatherapi.com/v1/current.json?key=${
+    `https://api.weatherapi.com/v1/current.json?key=${
       process.env.WEATHER_API
     }&q=${position?.replace(" ", "%20")}&aqi=no)}`
   );

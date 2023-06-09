@@ -6,5 +6,4 @@ module.exports = {
   env: {
     WEATHER_API: process.env.WEATHER_API,
   },
-  nextConfig,
 };
