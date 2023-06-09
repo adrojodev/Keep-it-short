@@ -14,7 +14,5 @@ export async function getWeather(position: string) {
   const humidity = data.current.humidity;
   const wind = data.current.wind_kph;
 
-  console.log(temp, humidity, wind);
-
   return { temperature: temp, humidity: humidity, wind: wind };
 }
