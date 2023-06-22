@@ -43,6 +43,11 @@ export default function Home() {
       weatherValue.humidity
     );
 
+    if (response === false) {
+      setShorts(undefined);
+      return;
+    }
+
     if (response === "yes") {
       setShorts(true);
     } else {
