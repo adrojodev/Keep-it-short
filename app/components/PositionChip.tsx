@@ -14,7 +14,7 @@ const PositionChip = ({ position, countryFlag, action }: positionChipProps) => {
   return (
     <Spacing stacked className="justify-center items-center text-center">
       {position ? (
-        <Spacing className="flex items-center justify-center bg-white border-[3px] border-borderGray px-8 py-3 rounded-full">
+        <Spacing className="flex items-center justify-center bg-white border-[3px] border-borderGray px-12 py-6 rounded-full">
           <Text className="leading-none">{`${countryFlag || "🏳️"} ${
             position || "Locating"
           }`}</Text>
