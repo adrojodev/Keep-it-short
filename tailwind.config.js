@@ -24,6 +24,9 @@ module.exports = {
       fontSize: {
         "5xl": "2.5rem",
       },
+      backgroundSize: {
+        25: "25%",
+      },
     },
   },
   plugins: [],
