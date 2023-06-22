@@ -1,16 +1,24 @@
 import classNames from "classnames";
 
 interface TextProps {
-  variant?: "title" | "subtitle" | "paragraph" | "date";
+  variant?:
+    | "title"
+    | "subtitle"
+    | "paragraph"
+    | "date"
+    | "decision"
+    | "weather";
   className?: string;
   children: React.ReactNode;
 }
 
 const variants = {
-  title: "text-4xl font-bold",
-  subtitle: "text-2xl font-semibold",
+  title: "text-[32px] font-bold",
+  subtitle: "text-[18px]",
   paragraph: "text-lg",
   date: "text-sm font-bold text-gray-500 italic",
+  decision: "text-[80px] md:text-[130px]",
+  weather: "text-3xl md:text-5xl",
 };
 
 const Text = ({ variant = "paragraph", className, children }: TextProps) => {
