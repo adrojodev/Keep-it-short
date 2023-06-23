@@ -1,5 +1,3 @@
-import { Metadata } from "./components/Metadata";
-
 import "./globals.css";
 import { Work_Sans } from "next/font/google";
 
