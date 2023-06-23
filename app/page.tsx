@@ -14,6 +14,7 @@ import { getResponse } from "./utils/ai";
 import { Answer } from "./components/Answer";
 
 export default function Home() {
+  const [loading, setLoading] = React.useState<boolean>(false);
   const [position, setPosition] = React.useState<string | undefined>(undefined);
   const [countryFlag, setCountryFlag] = React.useState<string | undefined>(
     undefined
@@ -31,6 +32,8 @@ export default function Home() {
 
   async function decide() {
     if (!position) return;
+
+    setLoading(true);
 
     const weatherValue = await getWeather(position);
 
@@ -53,6 +56,8 @@ export default function Home() {
     } else {
       setShorts(false);
     }
+
+    setLoading(false);
   }
 
   async function refreshLocation() {
@@ -81,46 +86,62 @@ export default function Home() {
           position ? "gap-4" : "gap-8"
         )}
       >
-        {shorts === undefined ? (
+        {loading ? (
+          <Text variant="title">Loading...</Text>
+        ) : (
           <>
-            <Spacing
-              stacked
-              className="justify-center items-center text-center"
-            >
-              {position ? (
+            {shorts === undefined ? (
+              <>
+                <Spacing
+                  stacked
+                  className="justify-center items-center text-center"
+                >
+                  {position ? (
+                    <Spacing stacked gap={8}>
+                      <Spacing stacked>
+                        <Text variant="title">
+                          Ask the AI if you should wear shorts today
+                        </Text>
+                        <Text variant="subtitle" className="bottom-0">
+                          Created by Jules & Rojo with 💛
+                        </Text>
+                      </Spacing>
+                      <PositionChip
+                        position={position}
+                        countryFlag={countryFlag}
+                        action={refreshLocation}
+                      />
+                    </Spacing>
+                  ) : (
+                    <>
+                      <Text variant="title">
+                        {position || "Pending location..."}
+                      </Text>
+                      <Text variant="subtitle">
+                        Please allow your location access to continue.
+                      </Text>
+                    </>
+                  )}
+                </Spacing>
+                {position && (
+                  <Button onClick={() => decide()}>Long or short?</Button>
+                )}
+              </>
+            ) : (
+              <>
                 <PositionChip
                   position={position}
                   countryFlag={countryFlag}
-                  action={refreshLocation}
+                  action={() => window.location.reload()}
                 />
-              ) : (
-                <>
-                  <Text variant="title">
-                    {position || "Pending location..."}
-                  </Text>
-                  <Text variant="subtitle">
-                    Please allow your location access to continue.
-                  </Text>
-                </>
-              )}
-            </Spacing>
-            <Button onClick={() => decide()} disabled={!position}>
-              {position ? "Long or short?" : "Pending location..."}
-            </Button>
-          </>
-        ) : (
-          <>
-            <PositionChip
-              position={position}
-              countryFlag={countryFlag}
-              action={() => window.location.reload()}
-            />
-            <Answer
-              shorts={shorts}
-              temperature={weather.temperature}
-              humidity={weather.humidity}
-              wind={weather.wind}
-            />
+                <Answer
+                  shorts={shorts}
+                  temperature={weather.temperature}
+                  humidity={weather.humidity}
+                  wind={weather.wind}
+                />
+              </>
+            )}
           </>
         )}
       </Spacing>
