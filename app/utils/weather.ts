@@ -10,9 +10,23 @@ export async function getWeather(position: string) {
   );
   const data = await response.json();
 
-  const temp = data.current.feelslike_c;
+  const feelslike = data.current.feelslike_c;
   const humidity = data.current.humidity;
   const wind = data.current.wind_kph;
+  const condition = data.current.condition.text;
+  const precipitation = data.current.precip_mm;
+  const temp = data.current.temp_c;
+  const isDay = data.current.is_day;
+  const cloud = data.current.cloud;
 
-  return { temperature: temp, humidity: humidity, wind: wind };
+  return {
+    temperature: temp,
+    humidity: humidity,
+    wind: wind,
+    isDay: isDay,
+    cloud: cloud,
+    condition: condition,
+    precipitation: precipitation,
+    feelslike: feelslike,
+  };
 }

@@ -17,7 +17,7 @@ export const Answer = ({
 }: AnswerProps) => {
   return (
     <Spacing stacked className="justify-center items-center text-center">
-      <Spacing stacked gap={4}>
+      <Spacing stacked gap={8}>
         <Spacing stacked gap={0}>
           <Text className="leading-none">You should wear</Text>
           <Text className="leading-none" variant="decision">

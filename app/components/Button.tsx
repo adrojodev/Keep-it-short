@@ -27,7 +27,7 @@ const Button = ({
           : "bg-buttonBlack text-white cursor-pointer",
         variant === "icon"
           ? "bg-transparent border-none w-fit h-fit text-black"
-          : "px-12 py-6 hover:scale-105 "
+          : "py-6 px-16 md:py-8 hover:scale-105 "
       )}
       onClick={onClick}
     >
