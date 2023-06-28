@@ -3,18 +3,30 @@ import { ArrowClockwise } from "@phosphor-icons/react";
 import Spacing from "./Spacing";
 import Text from "./Text";
 import Button from "./Button";
+import classNames from "classnames";
 
 interface positionChipProps {
+  small?: boolean;
   position?: string;
   countryFlag?: string;
   action?(): void;
 }
 
-const PositionChip = ({ position, countryFlag, action }: positionChipProps) => {
+const PositionChip = ({
+  small = false,
+  position,
+  countryFlag,
+  action,
+}: positionChipProps) => {
   return (
     <Spacing stacked className="justify-center items-center text-center">
       {position ? (
-        <Spacing className="flex items-center justify-center bg-white border-[3px] border-borderGray px-12 py-6 rounded-full">
+        <Spacing
+          className={classNames(
+            "flex items-center justify-center bg-white border-[3px] border-borderGray rounded-full px-12",
+            small ? "py-4" : "py-4 md:py-6"
+          )}
+        >
           <Text className="leading-none">{`${countryFlag || "🏳️"} ${
             position || "Locating"
           }`}</Text>

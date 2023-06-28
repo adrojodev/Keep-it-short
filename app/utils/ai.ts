@@ -14,12 +14,19 @@ export async function getResponse(
   position: string,
   temperature: string,
   wind: string,
-  humidity: string
+  humidity: string,
+  isDay: number,
+  cloud: number,
+  condition: string,
+  precipitation: number,
+  feelslike: number
 ) {
   try {
     const result = await openai.createCompletion({
       model: "text-davinci-003",
-      prompt: `Answer only with "yes" or "no" only. \n\nQ: Should I wear shorts cosidering I'm in ${position} and taking into account the following weather data, temperature: ${temperature}º, wind speed: ${wind}km/h, humidity: ${humidity}%?`,
+      prompt: `Answer only with "yes" or "no". \n\nQ: Should I wear shorts cosidering I'm in ${position} right now is ${
+        isDay ? "day" : "night"
+      } and taking into account the following weather data, temperature: ${temperature}ºC, feels like: ${feelslike}ºC, condition: ${condition}, percentage of cloud: ${cloud}%, precipitation: ${precipitation}, wind speed: ${wind}km/h, humidity: ${humidity}%?`,
       temperature: 0.5,
       max_tokens: 4000,
     });
@@ -27,7 +34,7 @@ export async function getResponse(
       .text!.replace(/[\W_]+/g, "")
       .toLowerCase();
 
-    return answer;
+    return answer === "yes";
   } catch (e) {
     return false;
   }

@@ -3,6 +3,8 @@
 import React from "react";
 import classNames from "classnames";
 
+import Link from "next/link";
+
 import Button from "./components/Button";
 import Spacing from "./components/Spacing";
 import Text from "./components/Text";
@@ -43,19 +45,15 @@ export default function Home() {
       position,
       weatherValue.temperature,
       weatherValue.wind,
-      weatherValue.humidity
+      weatherValue.humidity,
+      weatherValue.isDay,
+      weatherValue.cloud,
+      weatherValue.condition,
+      weatherValue.precipitation,
+      weatherValue.feelslike
     );
 
-    if (response === false) {
-      setShorts(undefined);
-      return;
-    }
-
-    if (response === "yes") {
-      setShorts(true);
-    } else {
-      setShorts(false);
-    }
+    setShorts(response);
 
     setLoading(false);
   }
@@ -82,7 +80,7 @@ export default function Home() {
     >
       <Spacing
         className={classNames(
-          "bg-white flex flex-col justify-center items-center border-[3px] md:w-3/5 h-1/2 min-h-[50vh] rounded-5xl",
+          "bg-white px-6 md:px-0 flex flex-col justify-center items-center border-[3px] md:w-3/5 h-1/2 min-h-[50vh] rounded-5xl",
           position ? "gap-4" : "gap-8"
         )}
       >
@@ -99,11 +97,11 @@ export default function Home() {
                   {position ? (
                     <Spacing stacked gap={8}>
                       <Spacing stacked>
-                        <Text variant="title">
-                          Ask the AI if you should wear shorts today
+                        <Text variant="subtitle" className="text-gray-600">
+                          We use AI to decide
                         </Text>
-                        <Text variant="subtitle" className="bottom-0">
-                          Created by Jules & Rojo with 💛
+                        <Text variant="title" className=" leading-none">
+                          To short or not to short?
                         </Text>
                       </Spacing>
                       <PositionChip
@@ -117,7 +115,7 @@ export default function Home() {
                       <Text variant="title">
                         {position || "Pending location..."}
                       </Text>
-                      <Text variant="subtitle">
+                      <Text variant="subtitle" className="text-gray-600">
                         Please allow your location access to continue.
                       </Text>
                     </>
@@ -128,8 +126,9 @@ export default function Home() {
                 )}
               </>
             ) : (
-              <>
+              <Spacing stacked gap={8}>
                 <PositionChip
+                  small
                   position={position}
                   countryFlag={countryFlag}
                   action={() => window.location.reload()}
@@ -140,10 +139,28 @@ export default function Home() {
                   humidity={weather.humidity}
                   wind={weather.wind}
                 />
-              </>
+              </Spacing>
             )}
           </>
         )}
+      </Spacing>
+      <Spacing
+        stacked
+        className="absolute bottom-4 left-0 right-0 max-w-fit mx-auto text-center bg-black text-white px-8 py-4 rounded-2xl"
+      >
+        <Text variant="paragraph">
+          Made with 💛 by{" "}
+          <Link
+            href="https://twitter.com/julesnewland"
+            className="hover:underline"
+          >
+            Jules
+          </Link>{" "}
+          and{" "}
+          <Link href="https://adrojo.art" className="hover:underline">
+            Rojo
+          </Link>
+        </Text>
       </Spacing>
     </main>
   );
