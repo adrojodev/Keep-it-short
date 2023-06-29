@@ -5,6 +5,7 @@ interface TextProps {
     | "title"
     | "subtitle"
     | "paragraph"
+    | "small"
     | "date"
     | "decision"
     | "weather";
@@ -16,6 +17,7 @@ const variants = {
   title: "text-[32px] font-bold",
   subtitle: "text-[18px]",
   paragraph: "text-lg",
+  small: "text-sm",
   date: "text-sm font-bold text-gray-500 italic",
   decision: "text-[80px] md:text-[130px]",
   weather: "text-3xl md:text-5xl",

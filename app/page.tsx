@@ -146,9 +146,9 @@ export default function Home() {
       </Spacing>
       <Spacing
         stacked
-        className="absolute bottom-4 left-0 right-0 max-w-fit mx-auto text-center bg-black text-white px-8 py-4 rounded-2xl"
+        className="absolute bottom-2 left-0 right-0 max-w-fit mx-auto text-center bg-black text-white px-4 py-4 rounded-2xl"
       >
-        <Text variant="paragraph">
+        <Text variant="small">
           Made with 💛 by{" "}
           <Link
             href="https://twitter.com/julesnewland"
