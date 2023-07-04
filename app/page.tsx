@@ -78,87 +78,91 @@ export default function Home() {
             : "url(/images/weatherBackground.png)",
       }}
     >
-      <Spacing
-        className={classNames(
-          "bg-white px-6 md:px-0 flex flex-col justify-center items-center border-[3px] md:w-3/5 h-1/2 min-h-[50vh] rounded-5xl",
-          position ? "gap-4" : "gap-8"
-        )}
-      >
-        {loading ? (
-          <Text variant="title">Loading...</Text>
-        ) : (
-          <>
-            {shorts === undefined ? (
-              <>
-                <Spacing
-                  stacked
-                  className="justify-center items-center text-center"
-                >
-                  {position ? (
-                    <Spacing stacked gap={8}>
-                      <Spacing stacked>
-                        <Text variant="subtitle" className="text-gray-600">
-                          We use AI to decide
-                        </Text>
-                        <Text variant="title" className=" leading-none">
-                          To short or not to short?
-                        </Text>
-                      </Spacing>
-                      <PositionChip
-                        position={position}
-                        countryFlag={countryFlag}
-                        action={refreshLocation}
-                      />
-                    </Spacing>
-                  ) : (
-                    <>
-                      <Text variant="title">
-                        {position || "Pending location..."}
-                      </Text>
-                      <Text variant="subtitle" className="text-gray-600">
-                        Please allow your location access to continue.
-                      </Text>
-                    </>
-                  )}
-                </Spacing>
-                {position && (
-                  <Button onClick={() => decide()}>Long or short?</Button>
-                )}
-              </>
-            ) : (
-              <Spacing stacked gap={8}>
-                <PositionChip
-                  small
-                  position={position}
-                  countryFlag={countryFlag}
-                />
-                <Answer
-                  shorts={shorts}
-                  temperature={weather.temperature}
-                  humidity={weather.humidity}
-                  wind={weather.wind}
-                />
-              </Spacing>
-            )}
-          </>
-        )}
-      </Spacing>
-      {shorts !== undefined && (
-        <Button
-          variant="social"
-          onClick={() =>
-            window.location.replace(
-              `https://twitter.com/intent/tweet?text=Today%20was%20a%20${
-                shorts ? "shorts%20🩳" : "pants%20👖"
-              }%20day%20check%20your%20day%20at%0a%0ahttps://keepitshort.xyz`
-            )
-          }
-          className="bg-black"
-          icon={<TwitterLogo size={24} />}
+      <Spacing stacked className="md:w-3/5">
+        <Spacing
+          className={classNames(
+            "bg-white px-6 md:px-0 flex flex-col justify-center items-center border-[3px] h-1/2 min-h-[50vh] rounded-5xl",
+            position ? "gap-4" : "gap-8"
+          )}
         >
-          Share
-        </Button>
-      )}
+          {loading ? (
+            <Text variant="title">Loading...</Text>
+          ) : (
+            <>
+              {shorts === undefined ? (
+                <>
+                  <Spacing
+                    stacked
+                    className="justify-center items-center text-center"
+                  >
+                    {position ? (
+                      <Spacing stacked gap={8}>
+                        <Spacing stacked>
+                          <Text variant="subtitle" className="text-gray-600">
+                            We use AI to decide
+                          </Text>
+                          <Text variant="title" className=" leading-none">
+                            To short or not to short?
+                          </Text>
+                        </Spacing>
+                        <PositionChip
+                          position={position}
+                          countryFlag={countryFlag}
+                          action={refreshLocation}
+                        />
+                      </Spacing>
+                    ) : (
+                      <>
+                        <Text variant="title">
+                          {position || "Pending location..."}
+                        </Text>
+                        <Text variant="subtitle" className="text-gray-600">
+                          Please allow your location access to continue.
+                        </Text>
+                      </>
+                    )}
+                  </Spacing>
+                  {position && (
+                    <Button onClick={() => decide()}>Long or short?</Button>
+                  )}
+                </>
+              ) : (
+                <Spacing stacked gap={8}>
+                  <PositionChip
+                    small
+                    position={position}
+                    countryFlag={countryFlag}
+                  />
+                  <Answer
+                    shorts={shorts}
+                    temperature={weather.temperature}
+                    humidity={weather.humidity}
+                    wind={weather.wind}
+                  />
+                </Spacing>
+              )}
+            </>
+          )}
+        </Spacing>
+        <Spacing className="justify-center">
+          {shorts !== undefined && (
+            <Button
+              variant="social"
+              onClick={() =>
+                window.location.replace(
+                  `https://twitter.com/intent/tweet?text=Today%20was%20a%20${
+                    shorts ? "shorts%20🩳" : "pants%20👖"
+                  }%20day%20check%20your%20day%20at%0a%0ahttps://keepitshort.xyz`
+                )
+              }
+              className="bg-black"
+              icon={<TwitterLogo size={24} />}
+            >
+              Share
+            </Button>
+          )}
+        </Spacing>
+      </Spacing>
 
       <Spacing
         stacked

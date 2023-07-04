@@ -22,7 +22,7 @@ const Button = ({
   return (
     <button
       className={classNames(
-        "flex rounded-full leading-none justify-center items-center transition-all text-base",
+        "flex rounded-full leading-none w-fit justify-center items-center transition-all text-base",
         icon && "gap-2",
         disabled
           ? "bg-buttonGray border-borderGray border-[3px] cursor-not-allowed"
@@ -30,7 +30,7 @@ const Button = ({
         variant === "icon"
           ? "bg-transparent border-none w-fit h-fit text-black"
           : variant === "social"
-          ? "bg-black border-2 border-[#D1D8DB] text-white px-8 py-4 hover:scale-105"
+          ? "bg-black border-2 border-[#D1D8DB] text-white px-8 py-3 hover:scale-105"
           : "py-6 px-16 md:py-8 hover:scale-105 bg-buttonBlack",
         className
       )}
