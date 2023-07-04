@@ -2,8 +2,8 @@
 
 import React from "react";
 import classNames from "classnames";
-
 import Link from "next/link";
+import { TwitterLogo } from "@phosphor-icons/react";
 
 import Button from "./components/Button";
 import Spacing from "./components/Spacing";
@@ -131,7 +131,6 @@ export default function Home() {
                   small
                   position={position}
                   countryFlag={countryFlag}
-                  action={() => window.location.reload()}
                 />
                 <Answer
                   shorts={shorts}
@@ -144,6 +143,23 @@ export default function Home() {
           </>
         )}
       </Spacing>
+      {shorts !== undefined && (
+        <Button
+          variant="social"
+          onClick={() =>
+            window.location.replace(
+              `https://twitter.com/intent/tweet?text=Today%20was%20a%20${
+                shorts ? "shorts%20🩳" : "pants%20👖"
+              }%20day%20check%20your%20day%20at%0a%0ahttps://keepitshort.xyz`
+            )
+          }
+          className="bg-black"
+          icon={<TwitterLogo size={24} />}
+        >
+          Share
+        </Button>
+      )}
+
       <Spacing
         stacked
         className="absolute bottom-2 left-0 right-0 max-w-fit mx-auto text-center bg-black text-white px-4 py-4 rounded-2xl"
