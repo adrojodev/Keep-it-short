@@ -150,9 +150,11 @@ export default function Home() {
               variant="social"
               onClick={() =>
                 window.location.replace(
-                  `https://twitter.com/intent/tweet?text=Today%20was%20a%20${
-                    shorts ? "shorts%20🩳" : "pants%20👖"
-                  }%20day%20check%20your%20day%20at%0a%0ahttps://keepitshort.xyz`
+                  `https://twitter.com/intent/tweet?text=${
+                    shorts
+                      ? "Time%20to%20unleash%20those%20leg%20rockets!%20🚀%20Today%20was%20a%20shorts%20day!%20🩳"
+                      : "🕺%20It%20is%20pant%20👖%20day%20and%20you%20are%20ready%20to%20slay%20the%20style%20game!"
+                  }%0a%0acheck%20your%20day%20at%20https://keepitshort.xyz`
                 )
               }
               className="bg-black"
