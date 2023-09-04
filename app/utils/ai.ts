@@ -12,21 +12,18 @@ const openai = new OpenAIApi(configuration);
 
 export async function getResponse(
   position: string,
-  temperature: string,
-  wind: string,
-  humidity: string,
-  isDay: number,
-  cloud: number,
-  condition: string,
-  precipitation: number,
-  feelslike: number
+  maxTemp: number,
+  minTemp: number,
+  avgTemp: number,
+  maxWind: number,
+  totalPrecip: number,
+  avgHumidity: number,
+  condition: string
 ) {
   try {
     const result = await openai.createCompletion({
       model: "text-davinci-003",
-      prompt: `Answer only with "yes" or "no". \n\nQ: Should I wear shorts cosidering I'm in ${position} right now is ${
-        isDay ? "day" : "night"
-      } and taking into account the following weather data, temperature: ${temperature}ºC, feels like: ${feelslike}ºC, condition: ${condition}, percentage of cloud: ${cloud}%, precipitation: ${precipitation}, wind speed: ${wind}km/h, humidity: ${humidity}%?`,
+      prompt: `Answer only with "yes" or "no". Should I wear shorts cosidering I'm in ${position} right now, and the forecast for today is: maximum temperature ${maxTemp} celsius, minimum is ${minTemp} celsius, the average temperature is ${avgTemp} celsius, the max wind is ${maxWind}km/h, the total precipitation is ${totalPrecip}mm, the average humidity is ${avgHumidity} and the condition is ${condition}?`,
       temperature: 0.5,
       max_tokens: 4000,
     });

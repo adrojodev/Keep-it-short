@@ -4,29 +4,27 @@ config();
 
 export async function getWeather(position: string) {
   const response = await fetch(
-    `https://api.weatherapi.com/v1/current.json?key=${
+    `https://api.weatherapi.com/v1/forecast.json?key=${
       process.env.WEATHER_API
     }&q=${position?.replace(" ", "%20")}&aqi=no)}`
   );
   const data = await response.json();
 
-  const feelslike = data.current.feelslike_c;
-  const humidity = data.current.humidity;
-  const wind = data.current.wind_kph;
-  const condition = data.current.condition.text;
-  const precipitation = data.current.precip_mm;
-  const temp = data.current.temp_c;
-  const isDay = data.current.is_day;
-  const cloud = data.current.cloud;
+  const maxTemp = data.forecast.forecastday[0].day.maxtemp_c;
+  const minTemp = data.forecast.forecastday[0].day.mintemp_c;
+  const avgTemp = data.forecast.forecastday[0].day.avgtemp_c;
+  const maxWind = data.forecast.forecastday[0].day.maxwind_kph;
+  const totalPrecip = data.forecast.forecastday[0].day.totalprecip_mm;
+  const avgHumidity = data.forecast.forecastday[0].day.avghumidity;
+  const condition = data.forecast.forecastday[0].day.condition.text;
 
   return {
-    temperature: temp,
-    humidity: humidity,
-    wind: wind,
-    isDay: isDay,
-    cloud: cloud,
-    condition: condition,
-    precipitation: precipitation,
-    feelslike: feelslike,
+    maxTemp,
+    minTemp,
+    avgTemp,
+    maxWind,
+    totalPrecip,
+    avgHumidity,
+    condition,
   };
 }

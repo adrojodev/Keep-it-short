@@ -43,14 +43,13 @@ export default function Home() {
 
     const response = await getResponse(
       position,
-      weatherValue.temperature,
-      weatherValue.wind,
-      weatherValue.humidity,
-      weatherValue.isDay,
-      weatherValue.cloud,
-      weatherValue.condition,
-      weatherValue.precipitation,
-      weatherValue.feelslike
+      weatherValue.maxTemp,
+      weatherValue.minTemp,
+      weatherValue.avgTemp,
+      weatherValue.maxWind,
+      weatherValue.totalPrecip,
+      weatherValue.avgHumidity,
+      weatherValue.condition
     );
 
     setShorts(response);
@@ -135,9 +134,9 @@ export default function Home() {
                   />
                   <Answer
                     shorts={shorts}
-                    temperature={weather.temperature}
-                    humidity={weather.humidity}
-                    wind={weather.wind}
+                    temperature={weather.avgTemp}
+                    humidity={weather.avgHumidity}
+                    wind={weather.maxWind}
                   />
                 </Spacing>
               )}
@@ -158,9 +157,8 @@ export default function Home() {
                 )
               }
               className="bg-black"
-              icon={<TwitterLogo size={24} />}
             >
-              Share
+              𝕏 Share
             </Button>
           )}
         </Spacing>
