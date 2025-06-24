@@ -1,3 +1,12 @@
+import { geolocation } from "@vercel/functions";
+
 export async function GET(request: Request) {
-  return "caca";
+  const { city } = geolocation(request);
+
+  return Response.json({
+    ok: true,
+    body: {
+      city,
+    },
+  });
 }
