@@ -1,8 +1,12 @@
-import { getWeather } from "./utils/weather";
+import { headers } from "next/headers";
 
 export default async function Home() {
-  const caca = await getWeather();
+  const headerList = headers();
+  const country = headerList.get("x-vercel-ip-country");
+  const city = headerList.get("x-vercel-ip-city");
+  const region = headerList.get("x-vercel-ip-country-region");
 
-  console.log({ caca });
+  console.log({ country, city, region });
+
   return <main>Hello</main>;
 }
