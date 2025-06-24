@@ -7,7 +7,7 @@ export default async function Home() {
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
-  const { city } = await response.json();
+  const loc = await response.json();
 
-  return <main>{city}</main>;
+  return <main>{loc}</main>;
 }

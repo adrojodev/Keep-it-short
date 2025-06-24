@@ -1,8 +1,9 @@
 import { geolocation } from "@vercel/functions";
-import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
-  const { city = "CDMX" } = geolocation(request);
+  const { city } = geolocation(request);
 
-  return NextResponse.json({ city });
+  return new Response(`<h1>Your location is ${city}</h1>`, {
+    headers: { "content-type": "text/html" },
+  });
 }
