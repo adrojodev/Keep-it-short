@@ -1,13 +1,14 @@
-import { headers } from "next/headers";
+interface HomeParams {
+  searchParams: {
+    country: string;
+    city: string;
+  };
+}
 
-export default async function Home() {
-  const response = await fetch("http://localhost:3000/api/weather", {
-    method: "GET",
-  });
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
-  }
-  const loc = await response.json();
+export default async function Home({
+  searchParams: { country, city },
+}: HomeParams) {
+  console.log({ country, city });
 
-  return <main>{loc}</main>;
+  return <main>Hello</main>;
 }
