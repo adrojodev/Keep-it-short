@@ -16,7 +16,7 @@ export default function Home({ searchParams: { country, city } }: HomeParams) {
     return await getShorts({ city, country });
   });
 
-  let children = <IdleStatus check={check} />;
+  let children = <IdleStatus status={status} check={check} />;
 
   if (status === "success") {
     children = <Success response={!!value?.wearShorts} />;
@@ -31,9 +31,10 @@ export default function Home({ searchParams: { country, city } }: HomeParams) {
 
 interface IdleStatusParams {
   check(): Promise<void>;
+  status: string;
 }
 
-const IdleStatus = ({ check }: IdleStatusParams) => {
+const IdleStatus = ({ check, status }: IdleStatusParams) => {
   return (
     <div className="flex flex-col text-center items-center gap-6">
       <div className="flex flex-col gap-1">
@@ -43,10 +44,11 @@ const IdleStatus = ({ check }: IdleStatusParams) => {
         </h1>
       </div>
       <button
+        disabled={status === "loading"}
         onClick={check}
         className="bg-neutral-100 px-4 py-1 text-black w-fit rounded-full hover:bg-neutral-50 hover:scale-105 transition-all"
       >
-        Find it out!
+        {status === "loading" ? "Loading..." : "Find it out!"}
       </button>
     </div>
   );
