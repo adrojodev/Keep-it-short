@@ -1,34 +1,71 @@
-import { Configuration, OpenAIApi } from "openai";
+"use server";
 
-const configuration = new Configuration({
+import OpenAI from "openai";
+
+const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const openai = new OpenAIApi(configuration);
+interface GetResponseParams {
+  country: string;
+  city: string;
+  maxTemp: number;
+  minTemp: number;
+  avgTemp: number;
+  maxWind: number;
+  totalPrecip: number;
+  avgHumidity: number;
+  condition: string;
+}
 
-export async function getResponse(
-  position: string,
-  maxTemp: number,
-  minTemp: number,
-  avgTemp: number,
-  maxWind: number,
-  totalPrecip: number,
-  avgHumidity: number,
-  condition: string
-) {
+type ShortsResponse = {
+  wearShorts: boolean;
+};
+
+export async function getResponse({
+  country,
+  city,
+  maxTemp,
+  minTemp,
+  avgTemp,
+  maxWind,
+  totalPrecip,
+  avgHumidity,
+  condition,
+}: GetResponseParams): Promise<ShortsResponse> {
   try {
-    const result = await openai.createCompletion({
-      model: "text-davinci-003",
-      prompt: `Answer only with "yes" or "no". Should I wear shorts cosidering I'm in ${position} right now, and the forecast for today is: maximum temperature ${maxTemp} celsius, minimum is ${minTemp} celsius, the average temperature is ${avgTemp} celsius, the max wind is ${maxWind}km/h, the total precipitation is ${totalPrecip}mm, the average humidity is ${avgHumidity} and the condition is ${condition}?`,
-      temperature: 0.5,
-      max_tokens: 4000,
-    });
-    const answer = result.data.choices[0]
-      .text!.replace(/[\W_]+/g, "")
-      .toLowerCase();
+    const result = await client.completions.create({
+      model: "gpt-4o-mini",
+      prompt: `You are an API responder.
 
-    return answer === "yes";
+Based on the following weather data, answer the question: should I wear shorts?
+
+Weather:
+- Location: ${city}, ${country}
+- Max Temp: ${maxTemp}°C
+- Min Temp: ${minTemp}°C
+- Avg Temp: ${avgTemp}°C
+- Max Wind: ${maxWind} km/h
+- Total Precipitation: ${totalPrecip} mm
+- Avg Humidity: ${avgHumidity}%
+- Condition: ${condition}
+
+Respond with **only** this exact JSON format:
+
+{"wearShorts": true}
+
+Replace true with false if the answer is no. Do not add any extra text, no prefixes like “Yes” or “No”, and no formatting. The response must be valid JSON only.`,
+      temperature: 0.4,
+      max_tokens: 100,
+      frequency_penalty: 0,
+      top_p: 1,
+      presence_penalty: 0,
+    });
+    const answer = JSON.parse(result.choices[0].text.trim());
+
+    return answer as ShortsResponse;
   } catch (e) {
-    return false;
+    console.error({ cacaError: e });
+    return { wearShorts: false };
   }
 }
