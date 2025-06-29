@@ -15,8 +15,14 @@ const BUTTON_TEXT: Translatable = {
   es: "Descubrelo!",
 };
 
+const USES: Translatable = {
+  en: "Uses left today:",
+  es: "Usos disponibles hoy:",
+};
+
 export const CONTENT = (lang: "en" | "es") => ({
   title: TITLE[lang],
   subtitle: SUBTITLE[lang],
   button: BUTTON_TEXT[lang],
+  uses: USES[lang],
 });

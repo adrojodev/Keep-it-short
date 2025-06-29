@@ -1,7 +1,8 @@
 "use client";
 
 import Button from "@/app/components/Button";
-import { getLang } from "@/app/helpers";
+import { useLang } from "@/app/hooks";
+
 import { CONTENT } from "./translatables";
 
 interface ErrorProps {
@@ -10,7 +11,7 @@ interface ErrorProps {
 }
 
 export const Error = ({ retry, isLoading }: ErrorProps) => {
-  const lang = getLang();
+  const lang = useLang();
   const content = CONTENT(lang);
 
   return (

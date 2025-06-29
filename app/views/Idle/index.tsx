@@ -5,7 +5,7 @@ import classNames from "classnames";
 
 import Button from "@/app/components/Button";
 import countries from "@/app/lib/countries.json";
-import { getLang } from "@/app/helpers";
+import { useLang, useShortsUses } from "@/app/hooks";
 
 import { CONTENT } from "./translatables";
 
@@ -17,7 +17,8 @@ interface IdleParams {
 }
 
 export const Idle = ({ check, isLoading, city, country }: IdleParams) => {
-  const lang = getLang();
+  const uses = useShortsUses();
+  const lang = useLang();
   const countryInfo = countries.find((x) => x.cca2 === country);
   const flag = countryInfo?.flag;
 
@@ -36,14 +37,19 @@ export const Idle = ({ check, isLoading, city, country }: IdleParams) => {
           {content.subtitle}
         </h1>
       </div>
-      <Button disabled={isLoading} onClick={check}>
-        {isLoading && (
-          <CircleNotch className="animate-spin absolute inset-0 m-auto" />
-        )}
-        <span className={classNames(isLoading && "text-transparent")}>
-          {content.button}
+      <div className="flex flex-col gap-2">
+        <Button disabled={isLoading} onClick={check}>
+          {isLoading && (
+            <CircleNotch className="animate-spin absolute inset-0 m-auto" />
+          )}
+          <span className={classNames(isLoading && "text-transparent")}>
+            {content.button}
+          </span>
+        </Button>
+        <span className="text-xs">
+          {content.uses} {uses}
         </span>
-      </Button>
+      </div>
     </div>
   );
 };

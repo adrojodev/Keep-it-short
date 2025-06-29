@@ -10,7 +10,19 @@ const PANTS_TEXT: Translatable = {
   es: "Al menos tenemos pantalones",
 };
 
+const BUTTON_TEXT: Translatable = {
+  en: "Try again",
+  es: "Intentarlo de nuevo",
+};
+
+const USES: Translatable = {
+  en: "Uses left today:",
+  es: "Usos disponibles hoy:",
+};
+
 export const CONTENT = (lang: "en" | "es") => ({
   pantsText: PANTS_TEXT[lang],
   shortsText: SHORT_TEXT[lang],
+  buttonText: BUTTON_TEXT[lang],
+  uses: USES[lang],
 });

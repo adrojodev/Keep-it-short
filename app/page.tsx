@@ -37,7 +37,7 @@ export default function Home({ searchParams: { country, city } }: HomeParams) {
   }
 
   if (status === "success") {
-    children = <Success wearShorts={!!value?.wearShorts} />;
+    children = <Success retry={check} wearShorts={!!value?.wearShorts} />;
   }
 
   return (
