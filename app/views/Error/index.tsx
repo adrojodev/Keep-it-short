@@ -1,6 +1,8 @@
 "use client";
 
 import Button from "@/app/components/Button";
+import { getLang } from "@/app/helpers";
+import { CONTENT } from "./translatables";
 
 interface ErrorProps {
   retry(): void;
@@ -8,16 +10,19 @@ interface ErrorProps {
 }
 
 export const Error = ({ retry, isLoading }: ErrorProps) => {
+  const lang = getLang();
+  const content = CONTENT(lang);
+
   return (
     <div className="flex flex-col gap-4 justify-center items-center text-center">
       <span className="text-2xl">🩴</span>
       <h2 className="text-3xl font-bold">
-        This is not normal...
+        {content.title}
         <br />
-        Something went wrong
+        {content.subtitle}
       </h2>
       <Button onClick={retry} isLoading={isLoading}>
-        Try again
+        {content.button}
       </Button>
     </div>
   );

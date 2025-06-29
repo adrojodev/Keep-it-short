@@ -2,30 +2,32 @@
 
 import React from "react";
 import { useReward } from "react-rewards";
+import { CONTENT } from "./translatables";
+import { getLang } from "@/app/helpers";
 
 interface SuccessParams {
-  response: boolean;
+  wearShorts: boolean;
 }
 
-export const Success = ({ response }: SuccessParams) => {
-  const shortsText = "Today is a shorts day!";
-  const pantsText = "Well, at least we have pants.";
+export const Success = ({ wearShorts }: SuccessParams) => {
+  const lang = getLang();
+  const content = CONTENT(lang);
 
   const { reward } = useReward("rewardId", "emoji", {
-    emoji: response ? ["🩳"] : ["👖"],
+    emoji: wearShorts ? ["🩳"] : ["👖"],
   });
 
   React.useEffect(() => {
     reward();
-  }, [response]);
+  }, [wearShorts]);
 
   return (
     <div className="flex flex-col gap-2 text-center justify-center items-center">
       <span className="text-2xl" id="rewardId">
-        {response ? "🩳" : "👖"}
+        {wearShorts ? "🩳" : "👖"}
       </span>
       <h2 className="text-3xl font-bold">
-        {response ? shortsText : pantsText}
+        {wearShorts ? content.shortsText : content.pantsText}
       </h2>
     </div>
   );

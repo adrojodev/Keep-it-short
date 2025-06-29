@@ -3,13 +3,13 @@
 import React from "react";
 import { useAsync } from "@react-hook/async";
 
-import { getShorts } from "./utils/shorts";
+import { getShorts } from "./actions/shorts";
 
 import { Background } from "./components/Background";
 
-import { Idle } from "./components/views/Idle";
-import { Success } from "./components/views/Success";
-import { Error } from "./components/views/Error";
+import { Idle } from "./views/Idle";
+import { Success } from "./views/Success";
+import { Error } from "./views/Error";
 
 interface HomeParams {
   searchParams: {
@@ -37,7 +37,7 @@ export default function Home({ searchParams: { country, city } }: HomeParams) {
   }
 
   if (status === "success") {
-    children = <Success response={!!value?.wearShorts} />;
+    children = <Success wearShorts={!!value?.wearShorts} />;
   }
 
   return (
