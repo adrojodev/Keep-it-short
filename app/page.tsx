@@ -1,6 +1,7 @@
 "use client";
 
 import { useAsync } from "@react-hook/async";
+import { useReward } from "react-rewards";
 
 import { getShorts } from "./utils/shorts";
 import countries from "@/app/lib/countries.json";
@@ -8,6 +9,7 @@ import { CircleNotch } from "@phosphor-icons/react";
 import classNames from "classnames";
 import Button from "./components/Button";
 import { Background } from "./components/Background";
+import React from "react";
 
 interface HomeParams {
   searchParams: {
@@ -91,9 +93,19 @@ const Success = ({ response }: SuccessParams) => {
   const shortsText = "Today is a shorts day!";
   const pantsText = "Well, at least we have pants.";
 
+  const { reward } = useReward("rewardId", "emoji", {
+    emoji: response ? ["🩳"] : ["👖"],
+  });
+
+  React.useEffect(() => {
+    reward();
+  }, [response]);
+
   return (
     <div className="flex flex-col gap-2 text-center justify-center items-center">
-      <span className="text-2xl">{response ? "🩳" : "👖"}</span>
+      <span className="text-2xl" id="rewardId">
+        {response ? "🩳" : "👖"}
+      </span>
       <h2 className="text-3xl font-bold">
         {response ? shortsText : pantsText}
       </h2>
