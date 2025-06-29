@@ -1,6 +1,7 @@
 import { Analytics } from "@vercel/analytics/next";
 import { Work_Sans } from "next/font/google";
 import "./globals.css";
+import classNames from "classnames";
 
 const workSans = Work_Sans({ subsets: ["latin"] });
 
@@ -33,7 +34,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={workSans.className}>
+      <body
+        className={classNames(
+          workSans.className,
+          "bg-neutral-50 dark:bg-neutral-950"
+        )}
+      >
         {children}
         <Analytics />
       </body>

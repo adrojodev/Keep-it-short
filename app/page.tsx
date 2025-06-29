@@ -42,7 +42,7 @@ export default function Home({ searchParams: { country, city } }: HomeParams) {
 
   return (
     <Background wearShorts={!!value?.wearShorts} status={status}>
-      <div className="flex justify-center items-center min-h-[100dvh] text-white relative z-20">
+      <div className="flex justify-center items-center min-h-[100dvh] text-neutral-950 dark:text-neutral-50 relative z-20">
         {children}
       </div>
     </Background>
@@ -61,7 +61,7 @@ const Idle = ({ check, isLoading, city, country }: IdleParams) => {
   const flag = countryInfo?.flag;
 
   return (
-    <div className="flex flex-col text-black text-center items-center gap-6">
+    <div className="flex flex-col text-center items-center gap-6 text-neutral-950 dark:text-neutral-50">
       <div className="flex flex-col gap-4 justify-center items-center">
         <div className="text-xl flex gap-2 items-center justify-center">
           <span>{flag}</span>
@@ -121,18 +121,15 @@ interface ErrorProps {
 const Error = ({ retry, isLoading }: ErrorProps) => {
   return (
     <div className="flex flex-col gap-4 justify-center items-center text-center">
-      <span className="text-xl">🩴</span>
+      <span className="text-2xl">🩴</span>
       <h2 className="text-3xl font-bold">
         This is not normal...
         <br />
         Something went wrong
       </h2>
-      <button
-        className="bg-neutral-100 px-4 py-2 text-black w-fit rounded-full relative flex justify-center items-center disabled:opacity-75 enabled:hover:bg-neutral-50 enabled:hover:scale-105 transition-all"
-        onClick={retry}
-      >
+      <Button onClick={retry} isLoading={isLoading}>
         Try again
-      </button>
+      </Button>
     </div>
   );
 };
