@@ -1,43 +1,27 @@
 "use client";
 
 import classNames from "classnames";
+import { ButtonHTMLAttributes } from "react";
+import { CircleNotch } from "@phosphor-icons/react";
 
-interface ButtonProps {
-  onClick: () => void;
-  children: React.ReactNode;
-  variant?: "regular" | "icon" | "social";
-  disabled?: boolean;
-  className?: string;
-  icon?: React.ReactNode;
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  isLoading?: boolean;
 }
 
-const Button = ({
-  onClick,
-  children,
-  disabled,
-  variant = "regular",
-  className,
-  icon,
-}: ButtonProps) => {
+const Button = ({ isLoading, children, ...props }: ButtonProps) => {
   return (
     <button
+      disabled={isLoading}
+      {...props}
       className={classNames(
-        "flex rounded-full leading-none w-fit justify-center items-center transition-all text-base",
-        icon && "gap-2",
-        disabled
-          ? "bg-buttonGray border-borderGray border-[3px] cursor-not-allowed"
-          : " text-white cursor-pointer",
-        variant === "icon"
-          ? "bg-transparent border-none w-fit h-fit text-black"
-          : variant === "social"
-          ? "bg-black border-2 border-[#D1D8DB] text-white px-8 py-3 hover:scale-105"
-          : "py-6 px-16 md:py-8 hover:scale-105 bg-buttonBlack",
-        className
+        "bg-neutral-100 px-4 py-2 text-black w-fit rounded-full relative flex justify-center items-center disabled:opacity-75 enabled:hover:bg-neutral-50 enabled:hover:scale-105 transition-all",
+        props.className
       )}
-      onClick={onClick}
     >
-      {children}
-      {icon}
+      {isLoading && <CircleNotch className="animate-spin absolute" />}
+      <span className={classNames(isLoading && "text-transparent")}>
+        {children}
+      </span>
     </button>
   );
 };

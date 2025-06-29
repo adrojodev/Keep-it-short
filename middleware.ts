@@ -1,8 +1,6 @@
 import { geolocation } from "@vercel/functions";
 import { type NextRequest, NextResponse } from "next/server";
-import countries from "@/app/lib/countries.json";
 
-// run only on homepage
 export const config = {
   matcher: "/",
 };

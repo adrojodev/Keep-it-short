@@ -20,6 +20,7 @@ interface GetResponseParams {
 
 type ShortsResponse = {
   wearShorts: boolean;
+  error?: boolean;
 };
 
 export async function getResponse({
@@ -34,36 +35,60 @@ export async function getResponse({
   condition,
 }: GetResponseParams): Promise<ShortsResponse> {
   try {
-    const result = await client.completions.create({
+    const response = await client.responses.parse({
       model: "gpt-4o-mini",
-      prompt: `You are an API responder.
+      input: [
+        {
+          role: "developer",
+          content: `It decides if should use pants based on an user that is on ${city} city on ${country} country with today's weather condition of:
+      
+      - Max temperature: ${maxTemp}
+      - Min temperature: ${minTemp}
+      - Average Temperature: ${avgTemp}
+      - Max Wind: ${maxWind}
+      - Total Precipitation: ${totalPrecip}
+      - Average Humidity: ${avgHumidity}
+      - Condition: ${condition}
+      `,
+        },
+      ],
+      text: {
+        format: {
+          name: "wearShorts",
+          type: "json_schema",
 
-Based on the following weather data, answer the question: should I wear shorts?
-
-Weather:
-- Location: ${city}, ${country}
-- Max Temp: ${maxTemp}°C
-- Min Temp: ${minTemp}°C
-- Avg Temp: ${avgTemp}°C
-- Max Wind: ${maxWind} km/h
-- Total Precipitation: ${totalPrecip} mm
-- Avg Humidity: ${avgHumidity}%
-- Condition: ${condition}
-
-Respond with **only** this exact JSON format:
-
-{"wearShorts": true}
-
-Replace true with false if the answer is no. Do not add any extra text, no prefixes like “Yes” or “No”, and no formatting. The response must be valid JSON only.`,
+          schema: {
+            type: "object",
+            properties: {
+              wearShorts: {
+                type: "boolean",
+                description:
+                  "The decision of using shorts or not in boolean value",
+              },
+            },
+            additionalProperties: false,
+            required: ["wearShorts"],
+          },
+        },
+      },
       temperature: 0.4,
-      max_tokens: 100,
-      frequency_penalty: 0,
       top_p: 1,
-      presence_penalty: 0,
     });
-    const answer = JSON.parse(result.choices[0].text.trim());
+    const generated = response.output_parsed;
 
-    return answer as ShortsResponse;
+    console.log({ generated });
+    if (
+      generated &&
+      typeof generated === "object" &&
+      "wearShorts" in generated
+    ) {
+      return {
+        wearShorts: (generated as ShortsResponse).wearShorts,
+        error: false,
+      };
+    }
+
+    return { wearShorts: false, error: true };
   } catch (e) {
     console.error({ cacaError: e });
     return { wearShorts: false };

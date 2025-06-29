@@ -3,6 +3,10 @@
 import { useAsync } from "@react-hook/async";
 
 import { getShorts } from "./utils/shorts";
+import countries from "@/app/lib/countries.json";
+import { CircleNotch } from "@phosphor-icons/react";
+import classNames from "classnames";
+import Button from "./components/Button";
 
 interface HomeParams {
   searchParams: {
@@ -16,7 +20,18 @@ export default function Home({ searchParams: { country, city } }: HomeParams) {
     return await getShorts({ city, country });
   });
 
-  let children = <IdleStatus status={status} check={check} />;
+  let children = (
+    <IdleStatus
+      city={city}
+      country={country}
+      isLoading={status === "loading"}
+      check={check}
+    />
+  );
+
+  if (value?.error || status === "error") {
+    children = <Error isLoading={status === "loading"} retry={check} />;
+  }
 
   if (status === "success") {
     children = <Success response={!!value?.wearShorts} />;
@@ -31,25 +46,34 @@ export default function Home({ searchParams: { country, city } }: HomeParams) {
 
 interface IdleStatusParams {
   check(): Promise<void>;
-  status: string;
+  isLoading: boolean;
+  city: string;
+  country: string;
 }
 
-const IdleStatus = ({ check, status }: IdleStatusParams) => {
+const IdleStatus = ({ check, isLoading, city, country }: IdleStatusParams) => {
+  const countryInfo = countries.find((x) => x.cca2 === country);
+  const flag = countryInfo?.flag;
+
   return (
     <div className="flex flex-col text-center items-center gap-6">
-      <div className="flex flex-col gap-1">
-        <span className="text-xl">🩳</span>
+      <div className="flex flex-col gap-4">
+        <div className="text-xl flex gap-2 items-center justify-center">
+          <span>{flag}</span>
+          <span>{city}</span>
+        </div>
         <h1 className="text-3xl font-bold">
-          to short or... <br /> not to short?
+          to short 🩳?
+          <br />
+          or not to short 👖?
         </h1>
       </div>
-      <button
-        disabled={status === "loading"}
-        onClick={check}
-        className="bg-neutral-100 px-4 py-1 text-black w-fit rounded-full hover:bg-neutral-50 hover:scale-105 transition-all"
-      >
-        {status === "loading" ? "Loading..." : "Find it out!"}
-      </button>
+      <Button disabled={isLoading} onClick={check}>
+        {isLoading && <CircleNotch className="animate-spin absolute" />}
+        <span className={classNames(isLoading && "text-transparent")}>
+          Find it out!
+        </span>
+      </Button>
     </div>
   );
 };
@@ -68,6 +92,30 @@ const Success = ({ response }: SuccessParams) => {
       <h2 className="text-3xl font-bold">
         {response ? shortsText : pantsText}
       </h2>
+    </div>
+  );
+};
+
+interface ErrorProps {
+  retry(): void;
+  isLoading: boolean;
+}
+
+const Error = ({ retry, isLoading }: ErrorProps) => {
+  return (
+    <div className="flex flex-col gap-4 justify-center items-center text-center">
+      <span className="text-xl">🩴</span>
+      <h2 className="text-3xl font-bold">
+        This is not normal...
+        <br />
+        Something went wrong
+      </h2>
+      <button
+        className="bg-neutral-100 px-4 py-2 text-black w-fit rounded-full relative flex justify-center items-center disabled:opacity-75 enabled:hover:bg-neutral-50 enabled:hover:scale-105 transition-all"
+        onClick={retry}
+      >
+        Try again
+      </button>
     </div>
   );
 };
