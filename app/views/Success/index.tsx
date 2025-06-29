@@ -38,7 +38,9 @@ export const Success = ({ retry, wearShorts }: SuccessParams) => {
         </h2>
       </div>
       <div className="flex flex-col gap-2 justify-center items-center">
-        <Button onClick={retry}>{content.buttonText}</Button>
+        <Button disabled={uses <= 0} onClick={retry}>
+          {content.buttonText}
+        </Button>
         <span className="text-xs">
           {content.uses} {uses}
         </span>

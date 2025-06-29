@@ -38,7 +38,7 @@ export const Idle = ({ check, isLoading, city, country }: IdleParams) => {
         </h1>
       </div>
       <div className="flex flex-col gap-2">
-        <Button disabled={isLoading} onClick={check}>
+        <Button disabled={isLoading || uses <= 0} onClick={check}>
           {isLoading && (
             <CircleNotch className="animate-spin absolute inset-0 m-auto" />
           )}
