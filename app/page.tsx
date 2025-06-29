@@ -7,6 +7,7 @@ import countries from "@/app/lib/countries.json";
 import { CircleNotch } from "@phosphor-icons/react";
 import classNames from "classnames";
 import Button from "./components/Button";
+import { Background } from "./components/Background";
 
 interface HomeParams {
   searchParams: {
@@ -21,7 +22,7 @@ export default function Home({ searchParams: { country, city } }: HomeParams) {
   });
 
   let children = (
-    <IdleStatus
+    <Idle
       city={city}
       country={country}
       isLoading={status === "loading"}
@@ -38,38 +39,42 @@ export default function Home({ searchParams: { country, city } }: HomeParams) {
   }
 
   return (
-    <main className="text-white flex justify-center items-center min-h-[100dvh]">
-      {children}
-    </main>
+    <Background wearShorts={!!value?.wearShorts} status={status}>
+      <div className="flex justify-center items-center min-h-[100dvh] text-white relative z-20">
+        {children}
+      </div>
+    </Background>
   );
 }
 
-interface IdleStatusParams {
+interface IdleParams {
   check(): Promise<void>;
   isLoading: boolean;
   city: string;
   country: string;
 }
 
-const IdleStatus = ({ check, isLoading, city, country }: IdleStatusParams) => {
+const Idle = ({ check, isLoading, city, country }: IdleParams) => {
   const countryInfo = countries.find((x) => x.cca2 === country);
   const flag = countryInfo?.flag;
 
   return (
-    <div className="flex flex-col text-center items-center gap-6">
-      <div className="flex flex-col gap-4">
+    <div className="flex flex-col text-black text-center items-center gap-6">
+      <div className="flex flex-col gap-4 justify-center items-center">
         <div className="text-xl flex gap-2 items-center justify-center">
           <span>{flag}</span>
           <span>{city}</span>
         </div>
         <h1 className="text-3xl font-bold">
-          to short 🩳?
+          To short 🩳?
           <br />
-          or not to short 👖?
+          Or not to short 👖?
         </h1>
       </div>
       <Button disabled={isLoading} onClick={check}>
-        {isLoading && <CircleNotch className="animate-spin absolute" />}
+        {isLoading && (
+          <CircleNotch className="animate-spin absolute inset-0 m-auto" />
+        )}
         <span className={classNames(isLoading && "text-transparent")}>
           Find it out!
         </span>
