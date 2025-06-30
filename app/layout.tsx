@@ -2,6 +2,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { Work_Sans } from "next/font/google";
 import "./globals.css";
 import classNames from "classnames";
+import { Credits } from "./components/Credits";
 
 const workSans = Work_Sans({ subsets: ["latin"] });
 
@@ -41,6 +42,7 @@ export default function RootLayout({
         )}
       >
         {children}
+        <Credits />
         <Analytics />
       </body>
     </html>
