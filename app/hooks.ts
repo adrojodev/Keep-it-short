@@ -18,14 +18,7 @@ export function useShortsUses() {
     const userId = parsed.userId;
     const uses = parsed.uses;
 
-    if (date !== today.toISOString()) {
-      window.localStorage.setItem(
-        "shorts",
-        `${{ date, userId, lastDecision, uses }}`
-      );
-
-      return MAX_USES;
-    }
+    if (date !== today.toISOString()) return MAX_USES;
 
     return parsed.uses;
   }, []);
