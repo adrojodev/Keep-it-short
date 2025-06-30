@@ -1,12 +1,26 @@
+"use client";
 import React from "react";
 
 import { MAX_USES } from "./constants";
 
 export function useShortsUses() {
   const [uses, setUses] = React.useState(() => {
-    const value = window.localStorage.getItem("shorts");
-    if (!value) return MAX_USES;
-    return JSON.parse(value).uses;
+    if (typeof window !== "undefined") {
+      const today = new Date();
+      today.setUTCHours(0, 0, 0, 0);
+
+      const value = window.localStorage.getItem("shorts");
+
+      if (!value) return MAX_USES;
+
+      const date = JSON.parse(value).date;
+
+      if (today.toISOString() !== date) return MAX_USES;
+
+      return JSON.parse(value).uses;
+    }
+
+    return 3;
   });
 
   React.useEffect(() => {
@@ -31,4 +45,29 @@ export function useLang() {
 
     return "en";
   }, [navigator.language]);
+}
+
+export function useLastDecision() {
+  const [lastDecision, setLastDecision] = React.useState<boolean | null>(() => {
+    if (typeof window === "undefined") return null;
+
+    const value = window.localStorage.getItem("shorts");
+
+    if (!value) return;
+
+    return value ? JSON.parse(value).wearShorts : null;
+  });
+
+  React.useEffect(() => {
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === "wearShorts") {
+        const value = window.localStorage.getItem("wearShorts");
+        setLastDecision(value ? JSON.parse(value) : null);
+      }
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
+  return lastDecision;
 }

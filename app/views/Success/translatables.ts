@@ -20,9 +20,15 @@ const USES: Translatable = {
   es: "Usos disponibles hoy:",
 };
 
+const NO_MORE_USES: Translatable = {
+  en: "You don't have more uses today",
+  es: "No tienes más usos hoy",
+};
+
 export const CONTENT = (lang: "en" | "es") => ({
   pantsText: PANTS_TEXT[lang],
   shortsText: SHORT_TEXT[lang],
   buttonText: BUTTON_TEXT[lang],
   uses: USES[lang],
+  noMoreUses: NO_MORE_USES[lang],
 });

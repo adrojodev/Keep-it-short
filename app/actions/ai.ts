@@ -76,7 +76,6 @@ export async function getResponse({
     });
     const generated = response.output_parsed;
 
-    console.log({ generated });
     if (
       generated &&
       typeof generated === "object" &&

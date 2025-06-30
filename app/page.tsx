@@ -10,6 +10,7 @@ import { Background } from "./components/Background";
 import { Idle } from "./views/Idle";
 import { Success } from "./views/Success";
 import { Error } from "./views/Error";
+import { useShortsUses } from "./hooks";
 
 interface HomeParams {
   searchParams: {
@@ -19,6 +20,7 @@ interface HomeParams {
 }
 
 export default function Home({ searchParams: { country, city } }: HomeParams) {
+  const uses = useShortsUses();
   const [{ status, value }, check] = useAsync(async () => {
     return await getShorts({ city, country });
   });
@@ -36,7 +38,7 @@ export default function Home({ searchParams: { country, city } }: HomeParams) {
     children = <Error isLoading={status === "loading"} retry={check} />;
   }
 
-  if (status === "success") {
+  if (status === "success" || uses === 0) {
     children = <Success retry={check} wearShorts={!!value?.wearShorts} />;
   }
 

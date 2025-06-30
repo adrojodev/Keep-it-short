@@ -1,5 +1,6 @@
 import type { AsyncStatus } from "@react-hook/async";
 import classNames from "classnames";
+import { useLastDecision, useShortsUses } from "../hooks";
 
 interface BackgroundProps {
   status: AsyncStatus;
@@ -12,16 +13,23 @@ export const Background = ({
   wearShorts,
   children,
 }: BackgroundProps) => {
+  const uses = useShortsUses();
+  const lastDecision = useLastDecision();
+
+  const shouldWearShorts = uses <= 0 ? lastDecision : wearShorts;
+
   return (
     <main className="w-full min-h-screen relative overflow-hidden">
       <div
         className={classNames(
           "absolute backdrop-blur-3xl w-full h-screen z-10 transition-colors duration-500",
-          status === "idle" && "bg-neutral-50/10",
+          status === "idle" && uses > 0 && "bg-neutral-50/10",
           status === "loading" && "bg-neutral-50/10",
           status === "error" && "bg-red-500/50",
-          status === "success" && !wearShorts && "bg-blue-500/50",
-          status === "success" && wearShorts && "bg-orange-500/50"
+          status === "success" && !shouldWearShorts && "bg-blue-500/50",
+          status === "success" && shouldWearShorts && "bg-orange-500/50",
+          status === "idle" && !shouldWearShorts && "bg-blue-500/50",
+          status === "idle" && shouldWearShorts && "bg-orange-500/50"
         )}
       />
       {children}
@@ -29,21 +37,25 @@ export const Background = ({
         <div
           className={classNames(
             "backdrop-opacity-50 w-11/12 aspect-square rounded-full absolute -top-5-left-5 transition-all duration-500",
-            status === "idle" && "bg-orange-500",
+            status === "idle" && uses > 0 && "bg-orange-500",
+            status === "idle" && !shouldWearShorts && "bg-blue-500",
+            status === "idle" && shouldWearShorts && "bg-orange-500",
             status === "loading" && "bg-orange-500",
             status === "error" && "bg-red-500",
-            status === "success" && !wearShorts && "bg-blue-500",
-            status === "success" && wearShorts && "bg-orange-500"
+            status === "success" && !shouldWearShorts && "bg-blue-500",
+            status === "success" && shouldWearShorts && "bg-orange-500"
           )}
         />
         <div
           className={classNames(
             " backdrop-opacity-50 w-11/12 aspect-square rounded-full absolute -bottom-5 -right-5 animate-background-bottom-idle transition-all duration-500",
-            status === "idle" && "bg-blue-500",
+            status === "idle" && uses > 0 && "bg-blue-500",
+            status === "idle" && !shouldWearShorts && "bg-blue-500",
+            status === "idle" && shouldWearShorts && "bg-orange-500",
             status === "loading" && "bg-blue-500",
             status === "error" && "bg-red-500",
-            status === "success" && !wearShorts && "bg-blue-500",
-            status === "success" && wearShorts && "bg-orange-500"
+            status === "success" && !shouldWearShorts && "bg-blue-500",
+            status === "success" && shouldWearShorts && "bg-orange-500"
           )}
         />
       </div>

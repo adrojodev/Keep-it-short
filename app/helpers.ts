@@ -55,3 +55,19 @@ export function addOneToUsage() {
     JSON.stringify({ date, userId, uses: uses++ })
   );
 }
+
+export function addWearShorts(wearShorts: boolean) {
+  const value = window.localStorage.getItem("shorts");
+
+  if (!value) return;
+
+  const values = JSON.parse(value);
+  const date = values.date;
+  const userId = values.userId;
+  const uses = values.uses;
+
+  window.localStorage.setItem(
+    "shorts",
+    JSON.stringify({ date, userId, uses, wearShorts })
+  );
+}
