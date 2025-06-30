@@ -4,34 +4,20 @@ import React from "react";
 import { MAX_USES } from "./constants";
 
 export function useShortsUses() {
-  const [uses, setUses] = React.useState(() => {
-    if (typeof window !== "undefined") {
-      const today = new Date();
-      today.setUTCHours(0, 0, 0, 0);
+  const uses = React.useMemo(() => {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
 
-      const value = window.localStorage.getItem("shorts");
+    const value = window.localStorage.getItem("shorts");
 
-      if (!value) return MAX_USES;
+    if (!value) return MAX_USES;
 
-      const date = JSON.parse(value).date;
+    const parsed = JSON.parse(value);
+    const date = parsed.date;
 
-      if (today.toISOString() !== date) return MAX_USES;
+    if (date !== today.toISOString()) return MAX_USES;
 
-      return JSON.parse(value).uses;
-    }
-
-    return 3;
-  });
-
-  React.useEffect(() => {
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key === "shorts") {
-        const value = window.localStorage.getItem("shorts");
-        setUses(value ? JSON.parse(value).uses : MAX_USES);
-      }
-    };
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
+    return parsed.uses;
   }, []);
 
   return uses;

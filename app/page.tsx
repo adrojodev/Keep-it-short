@@ -21,6 +21,7 @@ interface HomeParams {
 
 export default function Home({ searchParams: { country, city } }: HomeParams) {
   const uses = useShortsUses();
+  console.log({ cacaUses: uses });
   const [{ status, value }, check] = useAsync(async () => {
     return await getShorts({ city, country });
   });
