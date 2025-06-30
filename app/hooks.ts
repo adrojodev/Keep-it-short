@@ -14,9 +14,6 @@ export function useShortsUses() {
 
     const parsed = JSON.parse(value);
     const date = parsed.date;
-    const lastDecision = parsed.lastDecision;
-    const userId = parsed.userId;
-    const uses = parsed.uses;
 
     if (date !== today.toISOString()) return MAX_USES;
 

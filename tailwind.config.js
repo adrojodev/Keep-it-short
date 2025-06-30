@@ -29,6 +29,16 @@ module.exports = {
         50: "50%",
       },
       keyframes: {
+        reduce: {
+          "0%": { transform: "scale(2.1)" },
+          "50%": { transform: "scale(1)" },
+          "100%": { transform: "scale(2.1)" },
+        },
+        "reduce-mobile": {
+          "0%": { transform: "scale(1.2)" },
+          "50%": { transform: "scale(0.7)" },
+          "100%": { transform: "scale(1.2)" },
+        },
         "spin-slow": {
           "100%": {
             transform: "rotate(360deg)",
@@ -37,6 +47,8 @@ module.exports = {
       },
       animation: {
         "slow-spin": "spin-slow 7s linear infinite",
+        reduce: "reduce 7s ease-in-out infinite",
+        "reduce-mobile": "reduce-mobile 7s ease-in-out infinite",
       },
     },
   },
