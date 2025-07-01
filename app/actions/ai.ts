@@ -89,7 +89,6 @@ export async function getResponse({
 
     return { wearShorts: false, error: true };
   } catch (e) {
-    console.error({ cacaError: e });
     return { wearShorts: false };
   }
 }

@@ -36,7 +36,10 @@ export const Background = ({
       <div className="w-full h-screen absolute inset-0 z-0 transition-all animate-slow-spin">
         <div
           className={classNames(
-            "backdrop-opacity-50 w-11/12 md:w-10/12 aspect-square rounded-full absolute -top-5 md:top-1/3 -left-5 md:-left-10 transition-all duration-500 animate-reduce mix-blend-difference md:animate-reduce-mobile",
+            "backdrop-opacity-50 w-11/12 md:w-10/12 aspect-square rounded-full absolute -top-5 md:top-1/3 -left-5 md:-left-10 transition-all duration-500 animate-reduce md:animate-reduce-mobile",
+            status === "idle" || status === "loading"
+              ? "mix-blend-difference"
+              : "mix-blend-normal",
             status === "idle" && uses > 0 && "bg-orange-500",
             status === "idle" && !shouldWearShorts && "bg-blue-500",
             status === "idle" && shouldWearShorts && "bg-orange-500",
@@ -48,7 +51,10 @@ export const Background = ({
         />
         <div
           className={classNames(
-            " backdrop-opacity-50 w-11/12 md:w-10/12 aspect-square rounded-full absolute -bottom-5 md:bottom-1/3 -right-5 md:-right-20 transition-all duration-500 animate-reduce mix-blend-difference md:animate-reduce-mobile",
+            " backdrop-opacity-50 w-11/12 md:w-10/12 aspect-square rounded-full absolute -bottom-5 md:bottom-1/3 -right-5 md:-right-20 transition-all duration-500 animate-reduce  md:animate-reduce-mobile",
+            status === "idle" || status === "loading"
+              ? "mix-blend-difference"
+              : "mix-blend-normal",
             status === "idle" && uses > 0 && "bg-blue-500",
             status === "idle" && !shouldWearShorts && "bg-blue-500",
             status === "idle" && shouldWearShorts && "bg-orange-500",
