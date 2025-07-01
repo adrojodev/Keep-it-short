@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { Work_Sans } from "next/font/google";
 import "./globals.css";
@@ -6,10 +7,10 @@ import { Credits } from "./components/Credits";
 
 const workSans = Work_Sans({ subsets: ["latin"] });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Keep it short!",
   description: "Find if today is a good day to wear shorts.",
-  icon: {
+  icons: {
     icon: "favicon.ico",
     apple: "images/app-icon.png",
   },
