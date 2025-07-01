@@ -13,10 +13,10 @@ export const metadata: Metadata = {
   description: "Find if today is a good day to wear shorts.",
   icons: {
     icon: "favicon.ico",
-    apple: "/images/app-icon.png",
+    apple: "images/app-icon.png",
   },
   twitter: {
-    images: "/images/share-image.png",
+    images: "images/share-image.png",
   },
   appleWebApp: {
     capable: true,
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Keep it short!",
     description: "Find if today is a good day to wear shorts.",
-    images: "/images/share-image.png",
+    images: "images/share-image.png",
   },
 };
 
