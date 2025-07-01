@@ -8,6 +8,7 @@ import { Credits } from "./components/Credits";
 const workSans = Work_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://keepitshort.xyz"),
   title: "Keep it short!",
   description: "Find if today is a good day to wear shorts.",
   icons: {
