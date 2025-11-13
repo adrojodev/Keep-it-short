@@ -37,7 +37,7 @@ export default function Home() {
             city="..."
             country="..."
             isLoading={true}
-            check={() => {}}
+            check={async () => {}}
           />
         </div>
       </Background>
