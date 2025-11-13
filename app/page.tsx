@@ -10,26 +10,48 @@ import { Background } from "./components/Background";
 import { Idle } from "./views/Idle";
 import { Success } from "./views/Success";
 import { Error } from "./views/Error";
-import { useShortsUses } from "./hooks";
+import { useShortsUses, useGeolocation } from "./hooks";
 
-interface HomeParams {
-  searchParams: {
-    country: string;
-    city: string;
-  };
-}
-
-export default function Home({ searchParams: { country, city } }: HomeParams) {
+export default function Home() {
   const uses = useShortsUses();
+  const { location, error: geoError, loading: geoLoading } = useGeolocation();
 
   const [{ status, value }, check] = useAsync(async () => {
-    return await getShorts({ city, country });
-  });
+    if (!location) return null;
+    return await getShorts({ city: location.city, country: location.country });
+  }, [location]);
+
+  // Wait for geolocation to load
+  if (geoLoading) {
+    return (
+      <Background wearShorts={false} status="idle">
+        <div className="flex justify-center items-center min-h-[100dvh] text-neutral-950 dark:text-neutral-50 relative z-20">
+          <Idle
+            city="..."
+            country="..."
+            isLoading={true}
+            check={() => {}}
+          />
+        </div>
+      </Background>
+    );
+  }
+
+  // Show error if geolocation failed
+  if (geoError || !location) {
+    return (
+      <Background wearShorts={false} status="error">
+        <div className="flex justify-center items-center min-h-[100dvh] text-neutral-950 dark:text-neutral-50 relative z-20">
+          <Error isLoading={false} retry={() => window.location.reload()} />
+        </div>
+      </Background>
+    );
+  }
 
   let children = (
     <Idle
-      city={city}
-      country={country}
+      city={location.city}
+      country={location.country}
       isLoading={status === "loading"}
       check={check}
     />
