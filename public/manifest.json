@@ -1,0 +1,24 @@
+{
+  "name": "Keep it short!",
+  "short_name": "Keep it short!",
+  "description": "Find if today is a good day to wear shorts.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fafaf9",
+  "theme_color": "#fafaf9",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/images/app-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/app-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

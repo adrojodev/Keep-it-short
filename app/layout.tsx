@@ -15,6 +15,7 @@ export const metadata: Metadata = {
     icon: "favicon.ico",
     apple: "images/app-icon.png",
   },
+  manifest: "/manifest.json",
   twitter: {
     images: "images/share-image.png",
   },
@@ -28,6 +29,12 @@ export const metadata: Metadata = {
     description: "Find if today is a good day to wear shorts.",
     images: "images/share-image.png",
   },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+  },
+  themeColor: "#fafaf9",
 };
 
 export default function RootLayout({
