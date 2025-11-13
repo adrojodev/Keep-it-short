@@ -19,7 +19,14 @@ export default function Home() {
   const [{ status, value }, check] = useAsync(async () => {
     if (!location) return null;
     return await getShorts({ city: location.city, country: location.country });
-  }, [location]);
+  });
+
+  // Trigger check when location is available
+  React.useEffect(() => {
+    if (location && status === "idle") {
+      check();
+    }
+  }, [location, status, check]);
 
   // Wait for geolocation to load
   if (geoLoading) {
