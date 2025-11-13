@@ -21,13 +21,6 @@ export default function Home() {
     return await getShorts({ city: location.city, country: location.country });
   });
 
-  // Trigger check when location is available
-  React.useEffect(() => {
-    if (location && status === "idle") {
-      check();
-    }
-  }, [location, status, check]);
-
   // Wait for geolocation to load
   if (geoLoading) {
     return (
