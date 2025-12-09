@@ -18,7 +18,20 @@ export default function Home() {
 
   const [{ status, value }, check] = useAsync(async () => {
     if (!location) return null;
-    return await getShorts({ city: location.city, country: location.country });
+    const now = new Date();
+    const time = now.toLocaleString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric'
+    });
+    return await getShorts({
+      city: location.city,
+      country: location.country,
+      time
+    });
   });
 
   // Wait for geolocation to load
