@@ -16,6 +16,7 @@ interface GetResponseParams {
   totalPrecip: number;
   avgHumidity: number;
   condition: string;
+  time: string;
 }
 
 type ShortsResponse = {
@@ -33,6 +34,7 @@ export async function getResponse({
   totalPrecip,
   avgHumidity,
   condition,
+  time,
 }: GetResponseParams): Promise<ShortsResponse> {
   try {
     const response = await client.responses.parse({
@@ -41,7 +43,8 @@ export async function getResponse({
         {
           role: "developer",
           content: `It decides if should use pants based on an user that is on ${city} city on ${country} country with today's weather condition of:
-      
+
+      - Local Time: ${time}
       - Max temperature: ${maxTemp}
       - Min temperature: ${minTemp}
       - Average Temperature: ${avgTemp}
