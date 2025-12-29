@@ -59,7 +59,7 @@ export function useLastDecision() {
 }
 
 interface LocationData {
-  city: string;
+  neighborhood: string;
   country: string;
 }
 
@@ -91,10 +91,10 @@ export function useGeolocation() {
           );
 
           const data = await response.json();
-          const city = data.address.city || data.address.town || data.address.village || data.address.county || "Unknown";
+          const neighborhood = data.address.neighbourhood || data.address.suburb || data.address.quarter || data.address.city_district || data.address.city || data.address.town || data.address.village || "Unknown";
           const country = data.address.country_code?.toUpperCase() || "US";
 
-          setLocation({ city, country });
+          setLocation({ neighborhood, country });
           setLoading(false);
         } catch (err) {
           setError("Failed to get location information");

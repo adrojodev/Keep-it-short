@@ -8,7 +8,7 @@ const client = new OpenAI({
 
 interface GetResponseParams {
   country: string;
-  city: string;
+  neighborhood: string;
   maxTemp: number;
   minTemp: number;
   avgTemp: number;
@@ -26,7 +26,7 @@ type ShortsResponse = {
 
 export async function getResponse({
   country,
-  city,
+  neighborhood,
   maxTemp,
   minTemp,
   avgTemp,
@@ -42,7 +42,7 @@ export async function getResponse({
       input: [
         {
           role: "developer",
-          content: `It decides if should use pants based on an user that is on ${city} city on ${country} country with today's weather condition of:
+          content: `It decides if should use pants based on an user that is on ${neighborhood} neighborhood in ${country} country with today's weather condition of:
 
       - Local Time: ${time}
       - Max temperature: ${maxTemp}

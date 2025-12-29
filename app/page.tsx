@@ -28,7 +28,7 @@ export default function Home() {
       day: 'numeric'
     });
     return await getShorts({
-      city: location.city,
+      neighborhood: location.neighborhood,
       country: location.country,
       time
     });
@@ -40,7 +40,7 @@ export default function Home() {
       <Background wearShorts={false} status="idle">
         <div className="flex justify-center items-center min-h-[100dvh] text-neutral-950 dark:text-neutral-50 relative z-20">
           <Idle
-            city="..."
+            neighborhood="..."
             country="..."
             isLoading={true}
             check={async () => {}}
@@ -63,7 +63,7 @@ export default function Home() {
 
   let children = (
     <Idle
-      city={location.city}
+      neighborhood={location.neighborhood}
       country={location.country}
       isLoading={status === "loading"}
       check={check}
