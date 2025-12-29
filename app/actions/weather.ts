@@ -1,14 +1,14 @@
 "use server";
 
 interface GetWeatherParams {
-  city: string;
+  neighborhood: string;
 }
 
-export async function getWeather({ city }: GetWeatherParams) {
+export async function getWeather({ neighborhood }: GetWeatherParams) {
   const response = await fetch(
     `https://api.weatherapi.com/v1/forecast.json?key=${
       process.env.WEATHER_API
-    }&q=${city?.replace(" ", "%20")}&aqi=no)}`
+    }&q=${neighborhood?.replace(" ", "%20")}&aqi=no)}`
   );
   const data = await response.json();
   const maxTemp = data.forecast.forecastday[0].day.maxtemp_c;

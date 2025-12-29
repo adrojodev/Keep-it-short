@@ -12,11 +12,11 @@ import { CONTENT } from "./translatables";
 interface IdleParams {
   check(): Promise<void>;
   isLoading: boolean;
-  city: string;
+  neighborhood: string;
   country: string;
 }
 
-export const Idle = ({ check, isLoading, city, country }: IdleParams) => {
+export const Idle = ({ check, isLoading, neighborhood, country }: IdleParams) => {
   const uses = useShortsUses();
   const lang = useLang();
   const countryInfo = countries.find((x) => x.cca2 === country);
@@ -29,7 +29,7 @@ export const Idle = ({ check, isLoading, city, country }: IdleParams) => {
       <div className="flex flex-col gap-4 justify-center items-center">
         <div className="text-xl flex gap-2 items-center justify-center">
           <span>{flag}</span>
-          <span>{city}</span>
+          <span>{neighborhood}</span>
         </div>
         <h1 className="text-3xl font-bold">
           {content.title}
