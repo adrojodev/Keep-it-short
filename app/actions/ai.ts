@@ -2,10 +2,6 @@
 
 import OpenAI from "openai";
 
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 interface GetResponseParams {
   country: string;
   neighborhood: string;
@@ -37,12 +33,13 @@ export async function getResponse({
   time,
 }: GetResponseParams): Promise<ShortsResponse> {
   try {
+    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
     const response = await client.responses.parse({
       model: "gpt-4o-mini",
       input: [
         {
           role: "developer",
-          content: `It decides if should use pants based on an user that is on ${neighborhood} neighborhood in ${country} country with today's weather condition of:
+          content: `Decide whether the user should wear shorts. Return wearShorts=true for shorts and false for pants. The user is in ${neighborhood}, ${country}, with today's weather:
 
       - Local Time: ${time}
       - Max temperature: ${maxTemp}
@@ -77,21 +74,26 @@ export async function getResponse({
       temperature: 0.4,
       top_p: 1,
     });
-    const generated = response.output_parsed;
+    const generated: unknown = response.output_parsed;
 
     if (
       generated &&
       typeof generated === "object" &&
-      "wearShorts" in generated
+      "wearShorts" in generated &&
+      typeof generated.wearShorts === "boolean"
     ) {
       return {
-        wearShorts: (generated as ShortsResponse).wearShorts,
+        wearShorts: generated.wearShorts,
         error: false,
       };
     }
 
+    console.error("AI returned no valid recommendation", { requestId: response._request_id });
     return { wearShorts: false, error: true };
   } catch (e) {
-    return { wearShorts: false };
+    console.error("AI recommendation failed", e instanceof OpenAI.APIError
+      ? { status: e.status, code: e.code, type: e.type, requestId: e.requestID }
+      : { name: e instanceof Error ? e.name : "UnknownError" });
+    return { wearShorts: false, error: true };
   }
 }

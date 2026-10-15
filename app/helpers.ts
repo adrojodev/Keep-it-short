@@ -1,73 +1,49 @@
 import { v4 as uuidV4 } from "uuid";
-
 import { MAX_USES } from "./constants";
 
-export function runUsage() {
-  const today = new Date();
-  today.setUTCHours(0, 0, 0, 0);
+interface ShortsData {
+  date: string;
+  userId: string;
+  uses: number;
+  wearShorts?: boolean;
+}
 
-  const value = window.localStorage.getItem("shorts");
-  let usageData;
+function today() {
+  const date = new Date();
+  date.setUTCHours(0, 0, 0, 0);
+  return date.toISOString();
+}
 
-  if (!value) {
-    usageData = {
-      date: today.toISOString(),
-      userId: uuidV4(),
-      uses: MAX_USES - 1,
-    };
-    window.localStorage.setItem("shorts", JSON.stringify(usageData));
-    return true;
-  } else {
-    usageData = JSON.parse(value);
-
-    const storedDate = new Date(usageData.date);
-    storedDate.setUTCHours(0, 0, 0, 0);
-
-    if (storedDate.getTime() !== today.getTime()) {
-      usageData.date = today.toISOString();
-      usageData.uses = MAX_USES - 1;
-      window.localStorage.setItem("shorts", JSON.stringify(usageData));
-      return true;
-    } else {
-      if (usageData.uses > 0) {
-        usageData.uses -= 1;
-        window.localStorage.setItem("shorts", JSON.stringify(usageData));
-        return true;
-      } else {
-        return false;
-      }
-    }
+export function readShorts(): ShortsData | null {
+  try {
+    const value = window.localStorage.getItem("shorts");
+    const data = value ? JSON.parse(value) : null;
+    if (!data || data.date !== today() || typeof data.userId !== "string" ||
+        !Number.isInteger(data.uses) || data.uses < 0 || data.uses > MAX_USES) return null;
+    return { ...data, wearShorts: typeof data.wearShorts === "boolean" ? data.wearShorts : undefined };
+  } catch {
+    return null;
   }
 }
 
+function writeShorts(data: ShortsData) {
+  window.localStorage.setItem("shorts", JSON.stringify(data));
+  window.dispatchEvent(new Event("shorts-updated"));
+}
+
+export function runUsage() {
+  const data = readShorts() ?? { date: today(), userId: uuidV4(), uses: MAX_USES };
+  if (data.uses <= 0) return false;
+  writeShorts({ ...data, uses: data.uses - 1 });
+  return true;
+}
+
 export function addOneToUsage() {
-  const value = window.localStorage.getItem("shorts");
-
-  if (!value) return;
-
-  const values = JSON.parse(value);
-  const date = values.date;
-  const userId = values.userId;
-  let uses = values.uses;
-
-  window.localStorage.setItem(
-    "shorts",
-    JSON.stringify({ date, userId, uses: uses++ })
-  );
+  const data = readShorts();
+  if (data) writeShorts({ ...data, uses: Math.min(MAX_USES, data.uses + 1) });
 }
 
 export function addWearShorts(wearShorts: boolean) {
-  const value = window.localStorage.getItem("shorts");
-
-  if (!value) return;
-
-  const values = JSON.parse(value);
-  const date = values.date;
-  const userId = values.userId;
-  const uses = values.uses;
-
-  window.localStorage.setItem(
-    "shorts",
-    JSON.stringify({ date, userId, uses, wearShorts })
-  );
+  const data = readShorts();
+  if (data) writeShorts({ ...data, wearShorts });
 }

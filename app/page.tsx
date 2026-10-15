@@ -72,14 +72,12 @@ export default function Home() {
 
   if (value?.error || status === "error") {
     children = <Error isLoading={status === "loading"} retry={check} />;
-  }
-
-  if (status === "success" || uses === 0) {
+  } else if ((status === "success" && value) || (status === "idle" && uses === 0)) {
     children = <Success retry={check} wearShorts={!!value?.wearShorts} />;
   }
 
   return (
-    <Background wearShorts={!!value?.wearShorts} status={status}>
+    <Background wearShorts={!!value?.wearShorts} status={value?.error ? "error" : status}>
       <div className="flex justify-center items-center min-h-[100dvh] text-neutral-950 dark:text-neutral-50 relative z-20">
         {children}
       </div>

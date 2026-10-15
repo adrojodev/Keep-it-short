@@ -17,10 +17,13 @@ export async function getShorts({ neighborhood, country, time }: GetShortsParams
     const weather = await getWeather({ neighborhood });
     const response = await getResponse({ ...weather, neighborhood, country, time });
 
+    if (response.error) throw new Error("Recommendation failed");
+
     addWearShorts(response.wearShorts);
 
     return response;
   } catch {
     addOneToUsage();
+    return { wearShorts: false, error: true };
   }
 }

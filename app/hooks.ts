@@ -1,61 +1,47 @@
 "use client";
 import React from "react";
 
+import { readShorts } from "./helpers";
+
 import { MAX_USES } from "./constants";
 
-export function useShortsUses() {
-  const uses = React.useMemo(() => {
-    const today = new Date();
-    today.setUTCHours(0, 0, 0, 0);
+function useStoredShorts() {
+  const [stored, setStored] = React.useState<ReturnType<typeof readShorts>>(null);
 
-    const value = window.localStorage.getItem("shorts");
-
-    if (!value) return MAX_USES;
-
-    const parsed = JSON.parse(value);
-    const date = parsed.date;
-
-    if (date !== today.toISOString()) return MAX_USES;
-
-    return parsed.uses;
+  React.useEffect(() => {
+    const update = () => setStored(readShorts());
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === "shorts" || event.key === null) update();
+    };
+    update();
+    window.addEventListener("storage", onStorage);
+    window.addEventListener("shorts-updated", update);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener("shorts-updated", update);
+    };
   }, []);
 
-  return uses;
+  return stored;
+}
+
+export function useShortsUses() {
+  return useStoredShorts()?.uses ?? MAX_USES;
 }
 
 export function useLang() {
-  return React.useMemo(() => {
-    const lang = navigator.language;
-
-    if (lang.startsWith("es")) return "es";
-
-    return "en";
-  }, [navigator.language]);
+  const [lang, setLang] = React.useState<"en" | "es">("en");
+  React.useEffect(() => {
+    const update = () => setLang(navigator.language.startsWith("es") ? "es" : "en");
+    update();
+    window.addEventListener("languagechange", update);
+    return () => window.removeEventListener("languagechange", update);
+  }, []);
+  return lang;
 }
 
 export function useLastDecision() {
-  const [lastDecision, setLastDecision] = React.useState<boolean | null>(() => {
-    if (typeof window === "undefined") return null;
-
-    const value = window.localStorage.getItem("shorts");
-
-    if (!value) return;
-
-    return value ? JSON.parse(value).wearShorts : null;
-  });
-
-  React.useEffect(() => {
-    const handleStorage = (event: StorageEvent) => {
-      if (event.key === "wearShorts") {
-        const value = window.localStorage.getItem("wearShorts");
-        setLastDecision(value ? JSON.parse(value) : null);
-      }
-    };
-    window.addEventListener("storage", handleStorage);
-    return () => window.removeEventListener("storage", handleStorage);
-  }, []);
-
-  return lastDecision;
+  return useStoredShorts()?.wearShorts ?? null;
 }
 
 interface LocationData {
