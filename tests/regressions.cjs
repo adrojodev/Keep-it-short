@@ -143,6 +143,7 @@ test('Gateway API keys take precedence; HTTP, network, and malformed responses f
         if (mode === 'network') throw new Error('private upstream details');
         return { ok: mode !== 'http', status: 402, headers: new Headers(), json: async () => {
           if (mode === 'json') throw new SyntaxError('private response');
+          if (mode === 'http') return { error: { type: 'no_providers_available', message: 'Gateway denied test-key' } };
           return {};
         } };
       };

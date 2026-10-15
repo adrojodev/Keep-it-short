@@ -49,13 +49,16 @@ export async function getResponse(state: GetResponseParams): Promise<ShortsRespo
         },
       }),
     });
-    const requestId = response.headers.get("x-request-id");
+    const requestId = response.headers.get("x-request-id") ?? response.headers.get("x-vercel-id");
     if (!response.ok) {
       const failure = await response.json().catch(() => null);
       console.error("AI Gateway recommendation failed", {
         status: response.status,
         code: failure?.error?.code,
         type: failure?.error?.type,
+        message: typeof failure?.error?.message === "string"
+          ? failure.error.message.split(token).join("[redacted]").slice(0, 1000)
+          : undefined,
         requestId,
       });
       return { wearShorts: false, error: true };
