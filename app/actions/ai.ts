@@ -1,10 +1,6 @@
 "use server";
 
-import OpenAI from "openai";
-
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { getVercelOidcToken } from "@vercel/oidc";
 
 interface GetResponseParams {
   country: string;
@@ -24,74 +20,60 @@ type ShortsResponse = {
   error?: boolean;
 };
 
-export async function getResponse({
-  country,
-  neighborhood,
-  maxTemp,
-  minTemp,
-  avgTemp,
-  maxWind,
-  totalPrecip,
-  avgHumidity,
-  condition,
-  time,
-}: GetResponseParams): Promise<ShortsResponse> {
+export async function getResponse(state: GetResponseParams): Promise<ShortsResponse> {
   try {
-    const response = await client.responses.parse({
-      model: "gpt-4o-mini",
-      input: [
-        {
-          role: "developer",
-          content: `It decides if should use pants based on an user that is on ${neighborhood} neighborhood in ${country} country with today's weather condition of:
-
-      - Local Time: ${time}
-      - Max temperature: ${maxTemp}
-      - Min temperature: ${minTemp}
-      - Average Temperature: ${avgTemp}
-      - Max Wind: ${maxWind}
-      - Total Precipitation: ${totalPrecip}
-      - Average Humidity: ${avgHumidity}
-      - Condition: ${condition}
-      `,
+    const token = process.env.AI_GATEWAY_API_KEY || await getVercelOidcToken();
+    const response = await fetch("https://ai-gateway.vercel.sh/v1/evaluate", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+      signal: AbortSignal.timeout(15000),
+      body: JSON.stringify({
+        model: "typesafe-ai/jev",
+        state: {
+          ...state,
+          units: { temperature: "Celsius", wind: "km/h", precipitation: "mm", humidity: "percent" },
         },
-      ],
-      text: {
-        format: {
-          name: "wearShorts",
-          type: "json_schema",
-
-          schema: {
-            type: "object",
-            properties: {
-              wearShorts: {
-                type: "boolean",
-                description:
-                  "The decision of using shorts or not in boolean value",
-              },
+        questions: {
+          wearShorts: {
+            type: "boolean",
+            instructions: "Should a person wear shorts rather than long pants for typical outdoor activity in these weather conditions? Consider temperature, wind, rain, humidity, and local time.",
+            criteria: {
+              true: "Shorts are a comfortable choice for these weather conditions.",
+              false: "Long pants are more comfortable because it is cold, windy, or wet.",
             },
-            additionalProperties: false,
-            required: ["wearShorts"],
           },
         },
-      },
-      temperature: 0.4,
-      top_p: 1,
+      }),
     });
-    const generated = response.output_parsed;
-
-    if (
-      generated &&
-      typeof generated === "object" &&
-      "wearShorts" in generated
-    ) {
-      return {
-        wearShorts: (generated as ShortsResponse).wearShorts,
-        error: false,
-      };
+    const requestId = response.headers.get("x-request-id");
+    if (!response.ok) {
+      const failure = await response.json().catch(() => null);
+      console.error("AI Gateway recommendation failed", {
+        status: response.status,
+        code: failure?.error?.code,
+        type: failure?.error?.type,
+        requestId,
+      });
+      return { wearShorts: false, error: true };
     }
 
+    const data = await response.json();
+    const answer = data?.answers?.wearShorts;
+    if (answer?.type !== "boolean" || typeof answer.probability !== "number" ||
+        !Number.isFinite(answer.probability) || answer.probability < 0 || answer.probability > 1) {
+      console.error("AI Gateway returned no valid recommendation", { requestId });
+      return { wearShorts: false, error: true };
+    }
+
+    return { wearShorts: answer.probability > 0.5, error: false };
+  } catch (error) {
+    console.error("AI Gateway request failed", {
+      name: error instanceof Error ? error.name : "UnknownError",
+    });
     return { wearShorts: false, error: true };
-  } catch (e) {
-    return { wearShorts: false };
   }
 }

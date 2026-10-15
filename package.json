@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "node --test tests/*.cjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.0.10",
@@ -15,12 +16,12 @@
     "@types/react": "18.2.8",
     "@types/react-dom": "18.2.4",
     "@vercel/analytics": "^1.5.0",
+    "@vercel/oidc": "^4.0.1",
     "classnames": "^2.3.2",
     "dotenv": "^16.1.4",
     "eslint": "8.42.0",
     "eslint-config-next": "13.4.4",
     "next": "13.4.4",
-    "openai": "^5.8.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-rewards": "^2.1.0",
