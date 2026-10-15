@@ -90,26 +90,75 @@ test('a successful pants recommendation is saved and consumes exactly one use', 
   assert.equal(helpers.readShorts().wearShorts, false);
 });
 
-test('AI exceptions and malformed outputs are explicit errors; booleans remain valid', async () => {
+test('Jev requests use Gateway and validate boolean probabilities', async () => {
+  const originalFetch = global.fetch;
   const originalError = console.error;
+  const originalKey = process.env.AI_GATEWAY_API_KEY;
+  delete process.env.AI_GATEWAY_API_KEY;
+  console.error = () => {};
+  try {
+    const { getResponse } = load('app/actions/ai.ts', {
+      '@vercel/oidc': { getVercelOidcToken: async () => 'test-oidc' },
+    });
+    for (const probability of [0, 0.2, 0.5, 0.9, 1, -1, 2, '0.8', null]) {
+      global.fetch = async (url, options) => {
+        assert.equal(url, 'https://ai-gateway.vercel.sh/v1/evaluate');
+        assert.equal(options.headers.Authorization, 'Bearer test-oidc');
+        assert.equal(options.cache, 'no-store');
+        const request = JSON.parse(options.body);
+        assert.equal(request.model, 'typesafe-ai/jev');
+        assert.equal(request.questions.wearShorts.type, 'boolean');
+        assert.equal(request.state.units.temperature, 'Celsius');
+        return { ok: true, headers: new Headers(), json: async () => ({
+          answers: { wearShorts: { type: 'boolean', probability } },
+        }) };
+      };
+      const result = await getResponse({ avgTemp: 23 });
+      const valid = typeof probability === 'number' && probability >= 0 && probability <= 1;
+      assert.equal(result.error, !valid);
+      assert.equal(result.wearShorts, valid && probability > 0.5);
+    }
+  } finally {
+    global.fetch = originalFetch;
+    console.error = originalError;
+    if (originalKey === undefined) delete process.env.AI_GATEWAY_API_KEY;
+    else process.env.AI_GATEWAY_API_KEY = originalKey;
+  }
+});
+
+test('Gateway API keys take precedence; HTTP, network, and malformed responses fail safely', async () => {
+  const originalFetch = global.fetch;
+  const originalError = console.error;
+  const originalKey = process.env.AI_GATEWAY_API_KEY;
+  process.env.AI_GATEWAY_API_KEY = 'test-key';
   const logs = [];
   console.error = (...args) => logs.push(args);
   try {
-    for (const output of [null, { wearShorts: 'false' }, { wearShorts: false }, 'throw']) {
-      class FakeOpenAI {
-        static APIError = class extends Error {};
-        responses = { parse: async () => {
-          if (output === 'throw') throw new FakeOpenAI.APIError('private upstream details');
-          return { output_parsed: output };
+    const { getResponse } = load('app/actions/ai.ts', {
+      '@vercel/oidc': { getVercelOidcToken: () => { throw new Error('OIDC must not be used'); } },
+    });
+    for (const mode of ['http', 'network', 'malformed', 'json']) {
+      global.fetch = async (url, options) => {
+        assert.equal(options.headers.Authorization, 'Bearer test-key');
+        if (mode === 'network') throw new Error('private upstream details');
+        return { ok: mode !== 'http', status: 402, headers: new Headers(), json: async () => {
+          if (mode === 'json') throw new SyntaxError('private response');
+          return {};
         } };
-      }
-      const { getResponse } = load('app/actions/ai.ts', { openai: FakeOpenAI });
-      const result = await getResponse({});
-      assert.equal(result.error, output === 'throw' || output === null || typeof output.wearShorts !== 'boolean');
+      };
+      assert.equal((await getResponse({})).error, true);
     }
-    assert.equal(logs.length, 3);
-    assert.doesNotMatch(JSON.stringify(logs), /private upstream details/);
-  } finally { console.error = originalError; }
+    assert.equal(logs.length, 4);
+    assert.doesNotMatch(JSON.stringify(logs), /test-key|private/);
+    delete process.env.AI_GATEWAY_API_KEY;
+    global.fetch = async () => { assert.fail('Missing credentials must not send a request'); };
+    assert.equal((await getResponse({})).error, true);
+  } finally {
+    global.fetch = originalFetch;
+    console.error = originalError;
+    if (originalKey === undefined) delete process.env.AI_GATEWAY_API_KEY;
+    else process.env.AI_GATEWAY_API_KEY = originalKey;
+  }
 });
 
 test('weather encodes locations and rejects upstream error responses', async () => {

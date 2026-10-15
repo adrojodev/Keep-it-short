@@ -1,6 +1,6 @@
 "use server";
 
-import OpenAI from "openai";
+import { getVercelOidcToken } from "@vercel/oidc";
 
 interface GetResponseParams {
   country: string;
@@ -20,80 +20,54 @@ type ShortsResponse = {
   error?: boolean;
 };
 
-export async function getResponse({
-  country,
-  neighborhood,
-  maxTemp,
-  minTemp,
-  avgTemp,
-  maxWind,
-  totalPrecip,
-  avgHumidity,
-  condition,
-  time,
-}: GetResponseParams): Promise<ShortsResponse> {
+export async function getResponse(state: GetResponseParams): Promise<ShortsResponse> {
   try {
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    const response = await client.responses.parse({
-      model: "gpt-4o-mini",
-      input: [
-        {
-          role: "developer",
-          content: `Decide whether the user should wear shorts. Return wearShorts=true for shorts and false for pants. The user is in ${neighborhood}, ${country}, with today's weather:
-
-      - Local Time: ${time}
-      - Max temperature: ${maxTemp}
-      - Min temperature: ${minTemp}
-      - Average Temperature: ${avgTemp}
-      - Max Wind: ${maxWind}
-      - Total Precipitation: ${totalPrecip}
-      - Average Humidity: ${avgHumidity}
-      - Condition: ${condition}
-      `,
+    const token = process.env.AI_GATEWAY_API_KEY || await getVercelOidcToken();
+    const response = await fetch("https://ai-gateway.vercel.sh/v1/evaluate", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+      signal: AbortSignal.timeout(15000),
+      body: JSON.stringify({
+        model: "typesafe-ai/jev",
+        state: {
+          ...state,
+          units: { temperature: "Celsius", wind: "km/h", precipitation: "mm", humidity: "percent" },
         },
-      ],
-      text: {
-        format: {
-          name: "wearShorts",
-          type: "json_schema",
-
-          schema: {
-            type: "object",
-            properties: {
-              wearShorts: {
-                type: "boolean",
-                description:
-                  "The decision of using shorts or not in boolean value",
-              },
+        questions: {
+          wearShorts: {
+            type: "boolean",
+            instructions: "Should a person wear shorts rather than long pants for typical outdoor activity in these weather conditions? Consider temperature, wind, rain, humidity, and local time.",
+            criteria: {
+              true: "Shorts are a comfortable choice for these weather conditions.",
+              false: "Long pants are more comfortable because it is cold, windy, or wet.",
             },
-            additionalProperties: false,
-            required: ["wearShorts"],
           },
         },
-      },
-      temperature: 0.4,
-      top_p: 1,
+      }),
     });
-    const generated: unknown = response.output_parsed;
-
-    if (
-      generated &&
-      typeof generated === "object" &&
-      "wearShorts" in generated &&
-      typeof generated.wearShorts === "boolean"
-    ) {
-      return {
-        wearShorts: generated.wearShorts,
-        error: false,
-      };
+    const requestId = response.headers.get("x-request-id");
+    if (!response.ok) {
+      console.error("AI Gateway recommendation failed", { status: response.status, requestId });
+      return { wearShorts: false, error: true };
     }
 
-    console.error("AI returned no valid recommendation", { requestId: response._request_id });
-    return { wearShorts: false, error: true };
-  } catch (e) {
-    console.error("AI recommendation failed", e instanceof OpenAI.APIError
-      ? { status: e.status, code: e.code, type: e.type, requestId: e.requestID }
-      : { name: e instanceof Error ? e.name : "UnknownError" });
+    const data = await response.json();
+    const answer = data?.answers?.wearShorts;
+    if (answer?.type !== "boolean" || typeof answer.probability !== "number" ||
+        !Number.isFinite(answer.probability) || answer.probability < 0 || answer.probability > 1) {
+      console.error("AI Gateway returned no valid recommendation", { requestId });
+      return { wearShorts: false, error: true };
+    }
+
+    return { wearShorts: answer.probability > 0.5, error: false };
+  } catch (error) {
+    console.error("AI Gateway request failed", {
+      name: error instanceof Error ? error.name : "UnknownError",
+    });
     return { wearShorts: false, error: true };
   }
 }
