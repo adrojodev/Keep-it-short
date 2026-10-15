@@ -51,7 +51,13 @@ export async function getResponse(state: GetResponseParams): Promise<ShortsRespo
     });
     const requestId = response.headers.get("x-request-id");
     if (!response.ok) {
-      console.error("AI Gateway recommendation failed", { status: response.status, requestId });
+      const failure = await response.json().catch(() => null);
+      console.error("AI Gateway recommendation failed", {
+        status: response.status,
+        code: failure?.error?.code,
+        type: failure?.error?.type,
+        requestId,
+      });
       return { wearShorts: false, error: true };
     }
 
